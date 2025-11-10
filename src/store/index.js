@@ -118,12 +118,15 @@ export default createStore({
       viewMode: 'tile', // 'list' or 'tile'
       currentPage: 1,
       itemsPerPage: 6,
-      savedSearches: []
+      savedSearches: [],
+      isLoading: false
     }
   },
   mutations: {
     SET_FILTER(state, { filterName, value }) {
       state.filters[filterName] = value
+      console.log('Filter updated:', filterName, '=', value)
+      console.log('All filters:', state.filters)
     },
     SET_VIEW_MODE(state, mode) {
       state.viewMode = mode
@@ -143,18 +146,38 @@ export default createStore({
       if (property) {
         property.isFavorite = !property.isFavorite
       }
+    },
+    SET_LOADING(state, isLoading) {
+      state.isLoading = isLoading
     }
   },
   actions: {
-    updateFilter({ commit }, payload) {
+    async updateFilter({ commit }, payload) {
+      // Only show loading for property list filters (beds/baths), not map filters
+      const showLoading = payload.filterName === 'beds' || payload.filterName === 'baths'
+      
+      if (showLoading) {
+        commit('SET_LOADING', true)
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
+      
       commit('SET_FILTER', payload)
       commit('SET_CURRENT_PAGE', 1) // Reset to first page when filters change
+      
+      if (showLoading) {
+        commit('SET_LOADING', false)
+      }
     },
     setViewMode({ commit }, mode) {
       commit('SET_VIEW_MODE', mode)
     },
-    setPage({ commit }, page) {
+    async setPage({ commit }, page) {
+      commit('SET_LOADING', true)
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300))
       commit('SET_CURRENT_PAGE', page)
+      commit('SET_LOADING', false)
     },
     saveSearch({ commit }) {
       commit('SAVE_SEARCH')
@@ -166,22 +189,27 @@ export default createStore({
   getters: {
     filteredProperties: (state) => {
       let filtered = [...state.properties]
+      console.log('Starting filter with', filtered.length, 'properties')
       
       // Apply county filter
       if (state.filters.county && state.filters.county !== 'All') {
         filtered = filtered.filter(p => p.county === state.filters.county)
+        console.log('After county filter:', filtered.length, 'properties')
       }
       
       // Apply beds filter
       if (state.filters.beds) {
         filtered = filtered.filter(p => p.beds && p.beds >= state.filters.beds)
+        console.log('After beds filter:', filtered.length, 'properties (beds >=', state.filters.beds, ')')
       }
       
       // Apply baths filter
       if (state.filters.baths) {
         filtered = filtered.filter(p => p.baths && p.baths >= state.filters.baths)
+        console.log('After baths filter:', filtered.length, 'properties (baths >=', state.filters.baths, ')')
       }
       
+      console.log('Final filtered count:', filtered.length)
       return filtered
     },
     paginatedProperties: (state, getters) => {

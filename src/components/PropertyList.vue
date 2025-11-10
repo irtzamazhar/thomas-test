@@ -1,5 +1,16 @@
 <template>
-  <div class="p-3 md:p-4 lg:p-5 bg-white h-full">
+  <div class="p-3 md:p-4 lg:p-5 bg-white h-full relative">
+    <!-- Loading Overlay -->
+    <div 
+      v-if="isLoading"
+      class="absolute inset-0 bg-white bg-opacity-80 z-50 flex items-center justify-center"
+    >
+      <div class="flex flex-col items-center gap-3">
+        <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-gray-600 font-medium">Loading properties...</p>
+      </div>
+    </div>
+
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
       <div>
         <h2 class="text-sm md:text-base text-gray-600 font-normal m-0">Showing {{ totalProperties }} properties</h2>
@@ -34,13 +45,83 @@
     </div>
     
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
-      <div class="flex flex-wrap gap-2 md:gap-3">
-        <button class="py-[5px] px-[10px] bg-white text-gray-700 text-xs md:text-sm font-medium cursor-pointer flex items-center gap-2 transition-all hover:bg-gray-50" style="border: 1px solid #ccc; border-radius: 100em;">
-          Beds & Baths
-          <svg width="10" height="6" viewBox="0 0 10 6" fill="none" class="text-gray-400">
-            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
+      <div class="flex flex-wrap gap-2 md:gap-3 relative">
+        <!-- Beds & Baths Dropdown -->
+        <div class="relative">
+          <button 
+            @click="toggleBedsAndBaths"
+            :class="isBedsAndBathsOpen ? 'bg-gray-100' : 'bg-white'"
+            class="py-[5px] px-[10px] text-gray-700 text-xs md:text-sm font-medium cursor-pointer flex items-center gap-2 transition-all hover:bg-gray-50" 
+            style="border: 1px solid #ccc; border-radius: 100em;"
+          >
+            Beds & Baths
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" class="text-gray-400">
+              <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <!-- Backdrop -->
+          <div 
+            v-if="isBedsAndBathsOpen"
+            @click="isBedsAndBathsOpen = false"
+            class="fixed inset-0 z-40"
+          ></div>
+
+          <!-- Dropdown Panel -->
+          <div 
+            v-if="isBedsAndBathsOpen"
+            class="absolute top-full left-0 mt-2 w-[500px] max-w-[95vw] bg-white rounded-lg shadow-xl border border-gray-200 z-50 p-6"
+          >
+            <!-- Number of Bedrooms -->
+            <div class="mb-5">
+              <h3 class="text-base font-semibold text-gray-700 mb-3">Number of Bedrooms</h3>
+              <div class="grid grid-cols-6 gap-2 mb-3">
+                <button 
+                  v-for="option in bedroomOptions" 
+                  :key="option.value"
+                  @click="selectBedrooms(option.value)"
+                  :class="tempBedrooms === option.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'"
+                  class="py-3 px-4 border rounded-md text-sm font-medium transition-all"
+                >
+                  {{ option.label }}
+                </button>
+              </div>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  v-model="exactMatch"
+                  class="w-4 h-4 rounded border-gray-300"
+                >
+                <span class="text-sm text-gray-600">Use exact match</span>
+              </label>
+            </div>
+
+            <!-- Number of Bathrooms -->
+            <div class="mb-5">
+              <h3 class="text-base font-semibold text-gray-700 mb-3">Number of Bathrooms</h3>
+              <div class="grid grid-cols-6 gap-2">
+                <button 
+                  v-for="option in bathroomOptions" 
+                  :key="option.value"
+                  @click="selectBathrooms(option.value)"
+                  :class="tempBathrooms === option.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'"
+                  class="py-3 px-4 border rounded-md text-sm font-medium transition-all"
+                >
+                  {{ option.label }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Apply Button -->
+            <button 
+              @click="applyBedsAndBaths"
+              class="w-full py-3 bg-[#4a6b8a] text-white text-base font-semibold rounded-md hover:bg-[#3d5a75] transition-all"
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+
         <button class="py-[5px] px-[10px] bg-white text-gray-700 text-xs md:text-sm font-medium cursor-pointer flex items-center gap-2 transition-all hover:bg-gray-50" style="border: 1px solid #ccc; border-radius: 100em;">
           Value & Debt
           <svg width="10" height="6" viewBox="0 0 10 6" fill="none" class="text-gray-400">
@@ -164,7 +245,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import PropertyCard from './PropertyCard.vue'
 import Pagination from './Pagination.vue'
@@ -181,6 +262,64 @@ export default {
     const paginatedProperties = computed(() => store.getters.paginatedProperties)
     const totalProperties = computed(() => store.getters.totalProperties)
     const viewMode = computed(() => store.state.viewMode)
+    const isLoading = computed(() => store.state.isLoading)
+    
+    // Beds & Baths dropdown state
+    const isBedsAndBathsOpen = ref(false)
+    const tempBedrooms = ref(store.state.filters.beds)
+    const tempBathrooms = ref(store.state.filters.baths)
+    const exactMatch = ref(false)
+    
+    const bedroomOptions = [
+      { label: 'Any', value: null },
+      { label: '1+', value: 1 },
+      { label: '2+', value: 2 },
+      { label: '3+', value: 3 },
+      { label: '4+', value: 4 },
+      { label: '5+', value: 5 }
+    ]
+    
+    const bathroomOptions = [
+      { label: 'Any', value: null },
+      { label: '1+', value: 1 },
+      { label: '1.5+', value: 1.5 },
+      { label: '2+', value: 2 },
+      { label: '3+', value: 3 },
+      { label: '4+', value: 4 }
+    ]
+    
+    const toggleBedsAndBaths = () => {
+      if (!isBedsAndBathsOpen.value) {
+        // Sync temp values with current store filters when opening
+        tempBedrooms.value = store.state.filters.beds
+        tempBathrooms.value = store.state.filters.baths
+      }
+      isBedsAndBathsOpen.value = !isBedsAndBathsOpen.value
+    }
+    
+    const selectBedrooms = (value) => {
+      tempBedrooms.value = value
+    }
+    
+    const selectBathrooms = (value) => {
+      tempBathrooms.value = value
+    }
+    
+    const applyBedsAndBaths = async () => {
+      // Close dropdown immediately
+      isBedsAndBathsOpen.value = false
+      
+      // Then update filters (even if null to clear them)
+      await store.dispatch('updateFilter', {
+        filterName: 'beds',
+        value: tempBedrooms.value
+      })
+      await store.dispatch('updateFilter', {
+        filterName: 'baths',
+        value: tempBathrooms.value
+      })
+      console.log('Filters applied:', { beds: tempBedrooms.value, baths: tempBathrooms.value })
+    }
     
     const setView = (mode) => {
       store.dispatch('setViewMode', mode)
@@ -209,6 +348,17 @@ export default {
       paginatedProperties,
       totalProperties,
       viewMode,
+      isLoading,
+      isBedsAndBathsOpen,
+      tempBedrooms,
+      tempBathrooms,
+      exactMatch,
+      bedroomOptions,
+      bathroomOptions,
+      toggleBedsAndBaths,
+      selectBedrooms,
+      selectBathrooms,
+      applyBedsAndBaths,
       setView,
       toggleView,
       handleSaveSearch,

@@ -4,9 +4,9 @@
       <div class="w-full h-full relative" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(0,0,0,.02) 50px, rgba(0,0,0,.02) 51px), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0,0,0,.02) 50px, rgba(0,0,0,.02) 51px);">
         
         <!-- Top Filter Bar Overlay - Centered -->
-        <div class="absolute  left-0 right-0 flex items-center justify-center z-10 px-4">
+        <div class="absolute top-4 left-0 right-0 flex items-center justify-center z-10 px-4">
           <!-- Filter Container -->
-          <div class="bg-white rounded-full shadow-lg flex items-center">
+          <div class="bg-white rounded-full shadow-lg flex items-center relative">
             <!-- County Dropdown -->
             <select 
               v-model="selectedCounty" 
