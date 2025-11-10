@@ -151,7 +151,7 @@
     </div>
 
     <!-- Grid View -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 mb-8">
       <PropertyCard 
         v-for="property in paginatedProperties" 
         :key="property.id"
