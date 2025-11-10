@@ -70,18 +70,21 @@
           <!-- Dropdown Panel -->
           <div 
             v-if="isBedsAndBathsOpen"
-            class="absolute top-full left-0 mt-2 w-[500px] max-w-[95vw] bg-white rounded-lg shadow-xl border border-gray-200 z-50 p-6"
+            class="absolute top-full left-0 mt-2 w-[400px] max-w-[95vw] bg-white rounded-lg shadow-xl border border-gray-200 z-50 p-5"
           >
             <!-- Number of Bedrooms -->
-            <div class="mb-5">
-              <h3 class="text-base font-semibold text-gray-700 mb-3">Number of Bedrooms</h3>
-              <div class="grid grid-cols-6 gap-2 mb-3">
+            <div class="mb-6">
+              <h3 class="text-base font-semibold text-gray-700 mb-4">Number of Bedrooms</h3>
+              <div class="inline-flex border border-gray-300 rounded-md overflow-hidden mb-4">
                 <button 
-                  v-for="option in bedroomOptions" 
+                  v-for="(option, index) in bedroomOptions" 
                   :key="option.value"
                   @click="selectBedrooms(option.value)"
-                  :class="tempBedrooms === option.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'"
-                  class="py-3 px-4 border rounded-md text-sm font-medium transition-all"
+                  :class="[
+                    tempBedrooms === option.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 hover:bg-gray-50',
+                    index !== 0 ? 'border-l border-gray-300' : ''
+                  ]"
+                  class="py-2.5 px-4 text-sm font-medium transition-all"
                 >
                   {{ option.label }}
                 </button>
@@ -98,14 +101,17 @@
 
             <!-- Number of Bathrooms -->
             <div class="mb-5">
-              <h3 class="text-base font-semibold text-gray-700 mb-3">Number of Bathrooms</h3>
-              <div class="grid grid-cols-6 gap-2">
+              <h3 class="text-base font-semibold text-gray-700 mb-4">Number of Bathrooms</h3>
+              <div class="inline-flex border border-gray-300 rounded-md overflow-hidden">
                 <button 
-                  v-for="option in bathroomOptions" 
+                  v-for="(option, index) in bathroomOptions" 
                   :key="option.value"
                   @click="selectBathrooms(option.value)"
-                  :class="tempBathrooms === option.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'"
-                  class="py-3 px-4 border rounded-md text-sm font-medium transition-all"
+                  :class="[
+                    tempBathrooms === option.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 hover:bg-gray-50',
+                    index !== 0 ? 'border-l border-gray-300' : ''
+                  ]"
+                  class="py-2.5 px-4 text-sm font-medium transition-all"
                 >
                   {{ option.label }}
                 </button>
@@ -115,7 +121,7 @@
             <!-- Apply Button -->
             <button 
               @click="applyBedsAndBaths"
-              class="w-full py-3 bg-[#4a6b8a] text-white text-base font-semibold rounded-md hover:bg-[#3d5a75] transition-all"
+              class="w-full py-2.5 bg-[#4a6b8a] text-white text-sm font-semibold rounded-md hover:bg-[#3d5a75] transition-all"
             >
               Apply
             </button>
