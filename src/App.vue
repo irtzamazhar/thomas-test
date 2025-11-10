@@ -1,6 +1,5 @@
 <script setup>
 import AppHeader from './components/AppHeader.vue'
-import FilterBar from './components/FilterBar.vue'
 import MapView from './components/MapView.vue'
 import PropertyList from './components/PropertyList.vue'
 </script>
@@ -8,7 +7,6 @@ import PropertyList from './components/PropertyList.vue'
 <template>
   <div class="flex flex-col w-full h-screen overflow-hidden">
     <AppHeader />
-    <FilterBar />
     
     <div class="flex flex-col lg:flex-row flex-1 w-full overflow-hidden">
       <!-- Map: Fixed height on mobile, 50% width on desktop -->

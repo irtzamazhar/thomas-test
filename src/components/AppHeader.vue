@@ -1,6 +1,6 @@
 <template>
-  <header class="bg-white border-b border-gray-200">
-    <div class="flex items-center justify-between h-[70px] px-4 md:px-6 lg:px-8">
+  <header class="h-[70px] mb-[10px] bg-white border-b-2 border-[#eee]" style="box-shadow: rgba(201, 201, 201, 0.4) 0 2px 4px 2px;">
+    <div class="flex items-center justify-between h-full px-4 md:px-6 lg:px-8">
       <div class="flex items-center gap-4 md:gap-6 lg:gap-8">
         <!-- Hamburger Menu for Mobile -->
         <button 
