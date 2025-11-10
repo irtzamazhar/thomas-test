@@ -1,145 +1,108 @@
 <template>
-  <header class="app-header">
-    <div class="header-container">
-      <div class="logo">
-        <span class="logo-icon">J</span>
-        <div class="logo-text">
-          <span class="logo-main">GEORGIA</span>
-          <span class="logo-sub">FORECLOSURE</span>
-        </div>
+  <header class="bg-white border-b border-gray-200">
+    <div class="flex items-center justify-between h-[70px] px-4 md:px-6 lg:px-8">
+      <div class="flex items-center gap-4 md:gap-6 lg:gap-8">
+        <!-- Hamburger Menu for Mobile -->
+        <button 
+          @click="toggleMenu"
+          class="md:hidden flex flex-col gap-1.5 w-6 h-6 justify-center items-center"
+          aria-label="Toggle menu"
+        >
+          <span class="w-6 h-0.5 bg-gray-800 transition-all"></span>
+          <span class="w-6 h-0.5 bg-gray-800 transition-all"></span>
+          <span class="w-6 h-0.5 bg-gray-800 transition-all"></span>
+        </button>
+
+        <img 
+          src="https://www.georgiaforeclosure.com/assets/img/georgia_logo.png" 
+          alt="Georgia Foreclosure Logo" 
+          class="h-6 md:h-7 lg:h-8 w-auto"
+        />
+        
+        <nav class="hidden md:flex gap-3 lg:gap-4">
+          <a href="#" class="no-underline text-gray-800 text-sm lg:text-[15px] font-medium py-2 border-b-[3px] border-gray-800 transition-all">Foreclosure List</a>
+          <a href="#" class="no-underline text-gray-500 text-sm lg:text-[15px] font-medium py-2 border-b-[3px] border-transparent hover:text-gray-800 transition-all">Custom List</a>
+          <a href="#" class="no-underline text-gray-500 text-sm lg:text-[15px] font-medium py-2 border-b-[3px] border-transparent hover:text-gray-800 transition-all">Contact</a>
+        </nav>
       </div>
       
-      <nav class="nav-menu">
-        <a href="#" class="nav-link active">Foreclosure List</a>
-        <a href="#" class="nav-link">Custom List</a>
-        <a href="#" class="nav-link">Contact</a>
-      </nav>
-      
-      <div class="profile-section">
-        <span class="plan-text">Professional Plan</span>
-        <div class="profile-avatar">PP</div>
-        <svg class="dropdown-icon" width="12" height="8" viewBox="0 0 12 8" fill="none">
+      <div class="flex items-center gap-2 md:gap-3 cursor-pointer">
+        <span class="hidden sm:block text-xs md:text-sm text-gray-700 font-medium">Professional Plan</span>
+        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800 text-white flex items-center justify-center font-semibold text-xs md:text-sm">PP</div>
+        <svg class="text-gray-500 hidden sm:block" width="12" height="8" viewBox="0 0 12 8" fill="none">
           <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </div>
     </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div 
+      v-if="isMenuOpen"
+      class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+      @click="toggleMenu"
+    ></div>
+
+    <!-- Mobile Menu Sidebar -->
+    <transition name="slide">
+      <nav 
+        v-if="isMenuOpen"
+        class="md:hidden fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 flex flex-col"
+      >
+        <div class="flex items-center justify-between p-4 border-b border-gray-200">
+          <img 
+            src="https://www.georgiaforeclosure.com/assets/img/georgia_logo.png" 
+            alt="Logo" 
+            class="h-6 w-auto"
+          />
+          <button @click="toggleMenu" class="text-gray-600">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="flex flex-col p-4 gap-2">
+          <a href="#" class="no-underline text-gray-800 text-base font-medium py-3 px-4 rounded-md bg-gray-100">Foreclosure List</a>
+          <a href="#" class="no-underline text-gray-600 text-base font-medium py-3 px-4 rounded-md hover:bg-gray-50">Custom List</a>
+          <a href="#" class="no-underline text-gray-600 text-base font-medium py-3 px-4 rounded-md hover:bg-gray-50">Contact</a>
+        </div>
+      </nav>
+    </transition>
   </header>
 </template>
 
 <script>
+import { ref } from 'vue'
+
 export default {
-  name: 'AppHeader'
+  name: 'AppHeader',
+  setup() {
+    const isMenuOpen = ref(false)
+
+    const toggleMenu = () => {
+      isMenuOpen.value = !isMenuOpen.value
+    }
+
+    return {
+      isMenuOpen,
+      toggleMenu
+    }
+  }
 }
 </script>
 
 <style scoped>
-.app-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 0;
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
 }
 
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 70px;
-  padding: 0 2rem;
+.slide-enter-from {
+  transform: translateX(-100%);
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.logo-icon {
-  background: #1f2937;
-  color: white;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 20px;
-  border-radius: 4px;
-}
-
-.logo-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.logo-main {
-  font-weight: bold;
-  font-size: 16px;
-  color: #1f2937;
-  letter-spacing: 0.5px;
-}
-
-.logo-sub {
-  font-weight: 600;
-  font-size: 14px;
-  color: #1f2937;
-  letter-spacing: 0.5px;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 2rem;
-  flex: 1;
-  justify-content: center;
-}
-
-.nav-link {
-  text-decoration: none;
-  color: #6b7280;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 0.5rem 0;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s;
-}
-
-.nav-link.active {
-  color: #1f2937;
-  border-bottom-color: #1f2937;
-}
-
-.nav-link:hover {
-  color: #1f2937;
-}
-
-.profile-section {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-}
-
-.plan-text {
-  font-size: 14px;
-  color: #374151;
-  font-weight: 500;
-}
-
-.profile-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #1f2937;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.dropdown-icon {
-  color: #6b7280;
+.slide-leave-to {
+  transform: translateX(-100%);
 }
 </style>
 

@@ -6,92 +6,19 @@ import PropertyList from './components/PropertyList.vue'
 </script>
 
 <template>
-  <div class="app-container">
+  <div class="flex flex-col w-full h-screen overflow-hidden">
     <AppHeader />
     <FilterBar />
     
-    <div class="main-content">
-      <div class="map-section">
+    <div class="flex flex-col lg:flex-row flex-1 w-full overflow-hidden">
+      <!-- Map: Fixed height on mobile, 50% width on desktop -->
+      <div class="flex-none w-full lg:w-1/2 h-[250px] lg:h-full overflow-hidden border-b lg:border-b-0 lg:border-r border-gray-200">
         <MapView />
       </div>
       
-      <div class="list-section">
+      <div class="flex-1 w-full lg:w-1/2 h-auto lg:h-full overflow-y-auto">
         <PropertyList />
       </div>
     </div>
   </div>
 </template>
-
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: #f9fafb;
-  overflow: hidden;
-}
-
-html, body, #app {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-</style>
-
-<style scoped>
-.app-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.main-content {
-  display: flex;
-  flex: 1;
-  width: 100%;
-  overflow: hidden;
-}
-
-.map-section {
-  flex: 0 0 50%;
-  width: 50%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.list-section {
-  flex: 0 0 50%;
-  width: 50%;
-  height: 100%;
-  overflow-y: auto;
-  border-left: 1px solid #e5e7eb;
-}
-
-@media (max-width: 1024px) {
-  .main-content {
-    flex-direction: column;
-  }
-  
-  .map-section {
-    width: 100%;
-    height: 400px;
-    border-right: none;
-    border-bottom: 1px solid #e5e7eb;
-  }
-  
-  .list-section {
-    width: 100%;
-    height: auto;
-  }
-}
-</style>

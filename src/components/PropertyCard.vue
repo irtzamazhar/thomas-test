@@ -1,47 +1,53 @@
 <template>
-  <div class="property-card">
-    <div class="property-image-wrapper">
-      <img :src="property.image" :alt="property.address" class="property-image" />
-      <div class="property-badge">{{ property.county }}</div>
-      <button class="favorite-btn" @click="handleToggleFavorite">
-        <svg width="20" height="20" viewBox="0 0 20 20" :fill="property.isFavorite ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+  <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 flex flex-col">
+    <div class="relative w-full h-[200px] overflow-hidden">
+      <img :src="property.image" :alt="property.address" class="w-full h-full object-cover" />
+      <div class="absolute top-3 left-3 bg-white py-1 px-3 rounded text-xs font-semibold text-gray-800 shadow-sm">
+        {{ property.county }}
+      </div>
+      <button 
+        @click="handleToggleFavorite"
+        class="absolute top-3 right-3 bg-white border-none w-8 h-8 rounded-full flex items-center justify-center cursor-pointer shadow-sm text-red-500 transition-transform hover:scale-110"
+      >
+        <svg width="18" height="18" viewBox="0 0 20 20" :fill="property.isFavorite ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
           <path d="M10 17.5L3.5 11C1.5 9 1.5 5.5 3.5 3.5C5.5 1.5 9 1.5 10 3.5C11 1.5 14.5 1.5 16.5 3.5C18.5 5.5 18.5 9 16.5 11L10 17.5Z"/>
         </svg>
       </button>
     </div>
     
-    <div class="property-content">
-      <h3 class="property-address">{{ property.address }}</h3>
+    <div class="p-3 flex-1">
+      <h3 class="text-sm font-semibold text-gray-900 mb-2 leading-tight">{{ property.address }}</h3>
       
-      <div class="property-details">
-        <div class="detail-row">
-          <span class="detail-label">Sq. Ft.</span>
-          <span class="detail-value">{{ property.sqft ? property.sqft.toLocaleString() : '-' }}</span>
+      <div class="grid grid-cols-2 gap-2">
+        <div class="px-2.5 py-2 rounded bg-[#2c5282] text-white">
+          <div class="text-[10px] font-medium mb-0.5 opacity-90">After Repair Value</div>
+          <div class="text-lg font-bold">${{ formatPrice(property.afterRepairValue) }}</div>
         </div>
-        <div class="detail-row">
-          <span class="detail-label">Beds</span>
-          <span class="detail-value">{{ property.beds || '-' }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Baths</span>
-          <span class="detail-value">{{ property.baths || '-' }}</span>
+        <div class="px-2.5 py-2 rounded bg-gray-100 text-gray-900">
+          <div class="text-[10px] font-medium mb-0.5 text-gray-600">Foreclosure Amt</div>
+          <div class="text-lg font-bold">{{ property.foreclosureAmt ? '$' + formatPrice(property.foreclosureAmt) : '$-' }}</div>
         </div>
       </div>
-      
-      <div class="property-pricing">
-        <div class="price-box primary">
-          <div class="price-label">After Repair Value</div>
-          <div class="price-value">${{ formatPrice(property.afterRepairValue) }}</div>
-        </div>
-        <div class="price-box">
-          <div class="price-label">Foreclosure Amt</div>
-          <div class="price-value">{{ property.foreclosureAmt ? '$' + formatPrice(property.foreclosureAmt) : '$-' }}</div>
-        </div>
+    </div>
+    
+    <!-- Card Footer -->
+    <div class="grid grid-cols-4 border-t border-gray-200 bg-gray-50">
+      <div class="text-center py-2.5 border-r border-gray-200">
+        <div class="text-xs text-gray-600 font-medium mb-0.5">Beds</div>
+        <div class="text-base text-gray-900 font-bold">{{ property.beds || '-' }}</div>
       </div>
-      
-      <a :href="property.zillowUrl" target="_blank" class="zillow-link">
-        View on Zillow →
-      </a>
+      <div class="text-center py-2.5 border-r border-gray-200">
+        <div class="text-xs text-gray-600 font-medium mb-0.5">Baths</div>
+        <div class="text-base text-gray-900 font-bold">{{ property.baths || '-' }}</div>
+      </div>
+      <div class="text-center py-2.5 border-r border-gray-200">
+        <div class="text-xs text-gray-600 font-medium mb-0.5">Sq. Ft.</div>
+        <div class="text-base text-gray-900 font-bold">{{ property.sqft ? property.sqft.toLocaleString() : '-' }}</div>
+      </div>
+      <div class="text-center py-2.5">
+        <div class="text-xs text-gray-600 font-medium mb-0.5">Built</div>
+        <div class="text-base text-gray-900 font-bold">{{ property.buildYear || '-' }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -76,160 +82,4 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.property-card {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s;
-}
-
-.property-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-}
-
-.property-image-wrapper {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-}
-
-.property-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.property-badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #1f2937;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.favorite-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: white;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: #ef4444;
-  transition: all 0.2s;
-}
-
-.favorite-btn:hover {
-  transform: scale(1.1);
-}
-
-.property-content {
-  padding: 1.25rem;
-}
-
-.property-address {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 1rem 0;
-  line-height: 1.4;
-}
-
-.property-details {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.detail-row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.detail-label {
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.detail-value {
-  font-size: 14px;
-  color: #1f2937;
-  font-weight: 600;
-}
-
-.property-pricing {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.price-box {
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 6px;
-  background: #f9fafb;
-}
-
-.price-box.primary {
-  background: #1e3a5f;
-  color: white;
-}
-
-.price-label {
-  font-size: 11px;
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-  opacity: 0.8;
-}
-
-.price-box.primary .price-label {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.price-value {
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.price-box:not(.primary) .price-label {
-  color: #6b7280;
-}
-
-.price-box:not(.primary) .price-value {
-  color: #1f2937;
-}
-
-.zillow-link {
-  display: inline-block;
-  color: #2563eb;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.zillow-link:hover {
-  color: #1d4ed8;
-}
-</style>
 

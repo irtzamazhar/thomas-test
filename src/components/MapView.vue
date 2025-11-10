@@ -1,38 +1,40 @@
 <template>
-  <div class="map-container">
-    <div class="map-placeholder">
-      <div class="map-content">
+  <div class="w-full h-full relative">
+    <div class="w-full h-full bg-gradient-to-br from-green-100 to-green-200 relative overflow-hidden">
+      <div class="w-full h-full relative" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(0,0,0,.02) 50px, rgba(0,0,0,.02) 51px), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0,0,0,.02) 50px, rgba(0,0,0,.02) 51px);">
         <!-- Map clusters -->
         <div 
           v-for="property in properties" 
           :key="property.id" 
-          class="map-marker"
+          class="absolute -translate-x-1/2 -translate-y-1/2"
           :style="getMarkerPosition(property)"
         >
-          <div class="marker-cluster">{{ property.county.substring(0, 1) }}</div>
+          <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-md border-4 border-white cursor-pointer transition-transform hover:scale-110">
+            {{ property.county.substring(0, 1) }}
+          </div>
         </div>
         
-        <div class="map-controls">
-          <button class="map-control-btn">
+        <div class="absolute bottom-5 right-5 flex flex-col gap-2">
+          <button class="w-10 h-10 bg-white border border-gray-300 rounded-md flex items-center justify-center cursor-pointer shadow-sm text-gray-500 transition-all hover:bg-gray-50 hover:text-gray-800">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
-          <button class="map-control-btn">
+          <button class="w-10 h-10 bg-white border border-gray-300 rounded-md flex items-center justify-center cursor-pointer shadow-sm text-gray-500 transition-all hover:bg-gray-50 hover:text-gray-800">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
-          <button class="map-control-btn fullscreen">
+          <button class="w-10 h-10 bg-white border border-gray-300 rounded-md flex items-center justify-center cursor-pointer shadow-sm text-gray-500 transition-all hover:bg-gray-50 hover:text-gray-800 mt-2">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M2 2h4M14 2h-4M2 14h4M14 14h-4M2 2v4M14 2v4M2 14v-4M14 14v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
         </div>
         
-        <div class="map-overlay-text">
+        <div class="absolute top-5 left-5 bg-white py-4 px-6 rounded-lg shadow-md font-semibold text-gray-800">
           Georgia Foreclosure Map
-          <div class="map-subtext">Showing {{ properties.length }} properties</div>
+          <div class="text-xs font-normal text-gray-500 mt-1">Showing {{ properties.length }} properties</div>
         </div>
       </div>
     </div>
@@ -66,107 +68,4 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.map-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.map-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.map-content {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  background-image: 
-    repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(0,0,0,.02) 50px, rgba(0,0,0,.02) 51px),
-    repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0,0,0,.02) 50px, rgba(0,0,0,.02) 51px);
-}
-
-.map-marker {
-  position: absolute;
-  transform: translate(-50%, -50%);
-}
-
-.marker-cluster {
-  background: #2563eb;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border: 3px solid white;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.marker-cluster:hover {
-  transform: scale(1.1);
-}
-
-.map-controls {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.map-control-btn {
-  width: 40px;
-  height: 40px;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: #6b7280;
-  transition: all 0.2s;
-}
-
-.map-control-btn:hover {
-  background: #f9fafb;
-  color: #1f2937;
-}
-
-.map-control-btn.fullscreen {
-  margin-top: 8px;
-}
-
-.map-overlay-text {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: white;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.map-subtext {
-  font-size: 12px;
-  font-weight: 400;
-  color: #6b7280;
-  margin-top: 0.25rem;
-}
-</style>
 

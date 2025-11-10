@@ -1,32 +1,33 @@
 <template>
-  <div class="pagination">
-    <div class="pagination-info">
+  <div class="flex flex-col sm:flex-row justify-between items-center py-4 md:py-6 gap-3">
+    <div class="text-xs md:text-sm text-gray-500 font-medium">
       Showing page {{ currentPage }} of {{ totalPages }} pages
     </div>
     
-    <div class="pagination-controls">
+    <div class="flex gap-1 md:gap-2 flex-wrap justify-center">
       <button 
-        class="pagination-btn"
         :disabled="currentPage === 1"
         @click="goToPage(currentPage - 1)"
+        class="py-1.5 md:py-2 px-3 md:px-4 border border-gray-300 bg-white text-gray-700 text-xs md:text-sm font-medium rounded-md cursor-pointer transition-all hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Previous
+        <span class="hidden sm:inline">Previous</span>
+        <span class="sm:hidden">Prev</span>
       </button>
       
       <button 
         v-for="page in visiblePages" 
         :key="page"
-        class="pagination-btn page-number"
-        :class="{ active: page === currentPage }"
+        :class="page === currentPage ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'"
         @click="goToPage(page)"
+        class="py-1.5 md:py-2 px-3 md:px-4 border text-xs md:text-sm font-medium rounded-md cursor-pointer transition-all min-w-[36px] md:min-w-[40px]"
       >
         {{ page }}
       </button>
       
       <button 
-        class="pagination-btn"
         :disabled="currentPage === totalPages"
         @click="goToPage(currentPage + 1)"
+        class="py-1.5 md:py-2 px-3 md:px-4 border border-gray-300 bg-white text-gray-700 text-xs md:text-sm font-medium rounded-md cursor-pointer transition-all hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Next
       </button>
@@ -78,57 +79,4 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 0;
-}
-
-.pagination-info {
-  font-size: 14px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.pagination-controls {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.pagination-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
-  background: white;
-  color: #374151;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: 44px;
-}
-
-.pagination-btn:hover:not(:disabled):not(.active) {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-.pagination-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination-btn.page-number {
-  min-width: 40px;
-}
-
-.pagination-btn.active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
-}
-</style>
 

@@ -1,17 +1,25 @@
 <template>
-  <div class="filter-bar">
-    <div class="filter-dropdown">
-      <label>County</label>
-      <select v-model="selectedCounty" @change="updateCountyFilter">
+  <div class="flex flex-wrap gap-4 md:gap-6 py-4 md:py-5 px-4 md:px-6 lg:px-8 bg-gray-50 border-b border-gray-200">
+    <div class="flex flex-col gap-1 w-full sm:w-auto">
+      <label class="text-xs md:text-[13px] text-gray-500 font-medium">County</label>
+      <select 
+        v-model="selectedCounty" 
+        @change="updateCountyFilter"
+        class="py-2 pr-8 pl-3 border border-gray-300 rounded-md bg-white text-sm text-gray-800 cursor-pointer w-full sm:min-w-[150px] appearance-none bg-[url('data:image/svg+xml,%3Csvg%20width=%2712%27%20height=%278%27%20viewBox=%270%200%2012%208%27%20fill=%27none%27%20xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cpath%20d=%27M1%201L6%206L11%201%27%20stroke=%27%236b7280%27%20stroke-width=%272%27%20stroke-linecap=%27round%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_0.75rem_center] focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+      >
         <option v-for="county in counties" :key="county" :value="county">
           {{ county }}
         </option>
       </select>
     </div>
     
-    <div class="filter-dropdown">
-      <label>Month</label>
-      <select v-model="selectedMonth" @change="updateMonthFilter">
+    <div class="flex flex-col gap-1 w-full sm:w-auto">
+      <label class="text-xs md:text-[13px] text-gray-500 font-medium">Month</label>
+      <select 
+        v-model="selectedMonth" 
+        @change="updateMonthFilter"
+        class="py-2 pr-8 pl-3 border border-gray-300 rounded-md bg-white text-sm text-gray-800 cursor-pointer w-full sm:min-w-[150px] appearance-none bg-[url('data:image/svg+xml,%3Csvg%20width=%2712%27%20height=%278%27%20viewBox=%270%200%2012%208%27%20fill=%27none%27%20xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cpath%20d=%27M1%201L6%206L11%201%27%20stroke=%27%236b7280%27%20stroke-width=%272%27%20stroke-linecap=%27round%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_0.75rem_center] focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+      >
         <option value="All">All</option>
         <option value="January">January</option>
         <option value="February">February</option>
@@ -28,9 +36,13 @@
       </select>
     </div>
     
-    <div class="filter-dropdown">
-      <label>List</label>
-      <select v-model="selectedList" @change="updateListFilter">
+    <div class="flex flex-col gap-1 w-full sm:w-auto">
+      <label class="text-xs md:text-[13px] text-gray-500 font-medium">List</label>
+      <select 
+        v-model="selectedList" 
+        @change="updateListFilter"
+        class="py-2 pr-8 pl-3 border border-gray-300 rounded-md bg-white text-sm text-gray-800 cursor-pointer w-full sm:min-w-[150px] appearance-none bg-[url('data:image/svg+xml,%3Csvg%20width=%2712%27%20height=%278%27%20viewBox=%270%200%2012%208%27%20fill=%27none%27%20xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cpath%20d=%27M1%201L6%206L11%201%27%20stroke=%27%236b7280%27%20stroke-width=%272%27%20stroke-linecap=%27round%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_0.75rem_center] focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+      >
         <option value="All">All</option>
         <option value="Residential">Residential</option>
         <option value="Commercial">Commercial</option>
@@ -87,47 +99,4 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.filter-bar {
-  display: flex;
-  gap: 1.5rem;
-  padding: 1.25rem 2rem;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.filter-dropdown {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.filter-dropdown label {
-  font-size: 13px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.filter-dropdown select {
-  padding: 0.5rem 2rem 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  font-size: 14px;
-  color: #1f2937;
-  cursor: pointer;
-  min-width: 150px;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236b7280' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-}
-
-.filter-dropdown select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-</style>
 
