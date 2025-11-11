@@ -113,12 +113,121 @@
             </div>
           </transition>
         </div>
-        <button class="py-[5px] px-[10px] bg-white text-gray-700 text-xs md:text-sm font-medium cursor-pointer flex items-center gap-2 transition-all hover:bg-gray-50" style="border: 1px solid #ccc; border-radius: 100em;">
-          Value & Debt
-          <svg width="10" height="6" viewBox="0 0 10 6" fill="none" class="text-gray-400">
-            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
+        <div class="relative" ref="valueDebtRef">
+          <button
+            @click="toggleValueDebt"
+            class="py-[5px] px-[10px] bg-white text-gray-700 text-xs md:text-sm font-medium cursor-pointer flex items-center gap-2 transition-all hover:bg-gray-50"
+            style="border: 1px solid #ccc; border-radius: 100em;"
+          >
+            Value & Debt
+            <svg
+              :class="valueDebtOpen ? 'rotate-180 text-gray-600' : 'text-gray-400'"
+              class="transition-transform duration-200"
+              width="10"
+              height="6"
+              viewBox="0 0 10 6"
+              fill="none"
+            >
+              <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <transition name="fade">
+            <div
+              v-if="valueDebtOpen"
+              class="absolute left-0 mt-2 w-[340px] sm:w-[360px] bg-white rounded-2xl shadow-xl border border-gray-200 z-30 overflow-hidden"
+            >
+              <div class="bg-[#eef2f7] text-xs font-semibold text-gray-600 uppercase tracking-[0.08em] px-5 py-3 border-b border-gray-200">
+                Estimated After Repair Value
+              </div>
+              <div class="px-5 py-4 space-y-5">
+                <div class="grid grid-cols-[1fr_auto_1fr] gap-3 items-center">
+                  <div class="space-y-1.5">
+                    <div class="text-sm font-semibold text-gray-800">Minimum</div>
+                    <select v-model="selectedArvMin" class="value-select">
+                      <option v-for="option in valueOptions" :key="`arv-min-${option}`" :value="option">
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="text-2xl font-semibold text-gray-400">-</div>
+                  <div class="space-y-1.5">
+                    <div class="text-sm font-semibold text-gray-800">Maximum</div>
+                    <select v-model="selectedArvMax" class="value-select">
+                      <option v-for="option in valueOptions" :key="`arv-max-${option}`" :value="option">
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-[#eef2f7] text-xs font-semibold text-gray-600 uppercase tracking-[0.08em] px-5 py-3 border-y border-gray-200">
+                Foreclosure Amount
+              </div>
+              <div class="px-5 py-4 space-y-5">
+                <div class="grid grid-cols-[1fr_auto_1fr] gap-3 items-center">
+                  <div class="space-y-1.5">
+                    <div class="text-sm font-semibold text-gray-800">Minimum</div>
+                    <select v-model="selectedDebtMin" class="value-select">
+                      <option v-for="option in debtOptions" :key="`debt-min-${option}`" :value="option">
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="text-2xl font-semibold text-gray-400">-</div>
+                  <div class="space-y-1.5">
+                    <div class="text-sm font-semibold text-gray-800">Maximum</div>
+                    <select v-model="selectedDebtMax" class="value-select">
+                      <option v-for="option in debtOptions" :key="`debt-max-${option}`" :value="option">
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-[#eef2f7] text-xs font-semibold text-gray-600 uppercase tracking-[0.08em] px-5 py-3 border-y border-gray-200 flex items-center gap-2">
+                Loan Score
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" class="text-gray-400">
+                  <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/>
+                  <path d="M8 4.75c-.69 0-1.25.56-1.25 1.25H8c0-.14.11-.25.25-.25h.25c.14 0 .25.11.25.25 0 .26-.15.4-.46.62-.45.32-.79.73-.79 1.38V9h1.5v-.16c0-.37.21-.58.55-.82.45-.32.95-.71.95-1.52 0-.97-.79-1.75-1.75-1.75H8Z" fill="currentColor"/>
+                  <circle cx="8" cy="11.5" r=".6" fill="currentColor"/>
+                </svg>
+              </div>
+              <div class="px-5 py-4 space-y-5">
+                <div class="grid grid-cols-[1fr_auto_1fr] gap-3 items-center">
+                  <div class="space-y-1.5">
+                    <div class="text-sm font-semibold text-gray-800">Minimum</div>
+                    <select v-model="selectedLoanMin" class="value-select">
+                      <option v-for="option in loanScoreOptions" :key="`loan-min-${option}`" :value="option">
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="text-2xl font-semibold text-gray-400">-</div>
+                  <div class="space-y-1.5">
+                    <div class="text-sm font-semibold text-gray-800">Maximum</div>
+                    <select v-model="selectedLoanMax" class="value-select">
+                      <option v-for="option in loanScoreOptions" :key="`loan-max-${option}`" :value="option">
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="px-5 pb-5">
+                <button
+                  class="w-full h-11 md:h-12 bg-[#1f527a] text-white text-sm md:text-base font-semibold rounded-lg hover:bg-[#184161] transition-colors"
+                  @click="applyValueDebt"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          </transition>
+        </div>
         <button class="py-[5px] px-[10px] bg-white text-gray-700 text-xs md:text-sm font-medium cursor-pointer flex items-center gap-2 transition-all hover:bg-gray-50" style="border: 1px solid #ccc; border-radius: 100em;">
           More
           <svg width="10" height="6" viewBox="0 0 10 6" fill="none" class="text-gray-400">
@@ -238,7 +347,7 @@
 </template>
 
 <script>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import PropertyCard from './PropertyCard.vue'
 import Pagination from './Pagination.vue'
@@ -285,9 +394,93 @@ export default {
     const selectedBeds = ref('Any')
     const selectedBaths = ref('Any')
     const useExactMatch = ref(false)
+    const valueDebtOpen = ref(false)
+    const valueDebtRef = ref(null)
+
+    const valueOptionEntries = [
+      ['No Min', null],
+      ['$50K', 50_000],
+      ['$100K', 100_000],
+      ['$150K', 150_000],
+      ['$200K', 200_000],
+      ['$250K', 250_000],
+      ['$300K', 300_000],
+      ['$350K', 350_000],
+      ['$400K', 400_000],
+      ['$500K', 500_000],
+      ['$750K', 750_000],
+      ['$1M', 1_000_000],
+      ['$1.5M', 1_500_000],
+      ['$2M', 2_000_000],
+      ['$5M', 5_000_000],
+      ['No Max', null]
+    ]
+
+    const debtOptionEntries = [
+      ['No Min', null],
+      ['$10K', 10_000],
+      ['$25K', 25_000],
+      ['$50K', 50_000],
+      ['$75K', 75_000],
+      ['$100K', 100_000],
+      ['$150K', 150_000],
+      ['$200K', 200_000],
+      ['$250K', 250_000],
+      ['$500K', 500_000],
+      ['No Max', null]
+    ]
+
+    const loanScoreOptionEntries = [
+      ['No Min', null],
+      ['500', 500],
+      ['550', 550],
+      ['600', 600],
+      ['650', 650],
+      ['700', 700],
+      ['750', 750],
+      ['800', 800],
+      ['850', 850],
+      ['No Max', null]
+    ]
+
+    const valueOptions = valueOptionEntries.map(([label]) => label)
+    const debtOptions = debtOptionEntries.map(([label]) => label)
+    const loanScoreOptions = loanScoreOptionEntries.map(([label]) => label)
+
+    const selectedArvMin = ref('No Min')
+    const selectedArvMax = ref('No Max')
+    const selectedDebtMin = ref('No Min')
+    const selectedDebtMax = ref('No Max')
+    const selectedLoanMin = ref('No Min')
+    const selectedLoanMax = ref('No Max')
+
+    const findOptionByValue = (entries, value, fallback) => {
+      if (value === null || value === undefined) return fallback
+      const entry = entries.find(([, val]) => val === value)
+      return entry ? entry[0] : fallback
+    }
+
+    const parseOptionValue = (entries, option, isMax = false) => {
+      if (option === 'No Min' || option === 'No Max') return null
+      const entry = entries.find(([label]) => label === option)
+      return entry ? entry[1] : null
+    }
+
+    const syncValueDebtState = () => {
+      const filters = store.state.filters
+      selectedArvMin.value = findOptionByValue(valueOptionEntries, filters.minValue, 'No Min')
+      selectedArvMax.value = findOptionByValue(valueOptionEntries, filters.maxValue, 'No Max')
+      selectedDebtMin.value = findOptionByValue(debtOptionEntries, filters.minDebt, 'No Min')
+      selectedDebtMax.value = findOptionByValue(debtOptionEntries, filters.maxDebt, 'No Max')
+      selectedLoanMin.value = findOptionByValue(loanScoreOptionEntries, filters.minLoanScore, 'No Min')
+      selectedLoanMax.value = findOptionByValue(loanScoreOptionEntries, filters.maxLoanScore, 'No Max')
+    }
 
     const toggleBedsBaths = () => {
       bedsBathsOpen.value = !bedsBathsOpen.value
+      if (bedsBathsOpen.value) {
+        valueDebtOpen.value = false
+      }
     }
 
     const selectBeds = (option) => {
@@ -302,15 +495,54 @@ export default {
       bedsBathsOpen.value = false
     }
 
-    const handleOutsideClick = (event) => {
-      if (!bedsBathsRef.value) return
-      if (bedsBathsRef.value.contains(event.target)) return
+    const toggleValueDebt = () => {
+      valueDebtOpen.value = !valueDebtOpen.value
+      if (valueDebtOpen.value) {
+        bedsBathsOpen.value = false
+      }
+    }
 
-      bedsBathsOpen.value = false
+    const applyValueDebt = async () => {
+      const payloads = [
+        { filterName: 'minValue', value: parseOptionValue(valueOptionEntries, selectedArvMin.value) },
+        { filterName: 'maxValue', value: parseOptionValue(valueOptionEntries, selectedArvMax.value) },
+        { filterName: 'minDebt', value: parseOptionValue(debtOptionEntries, selectedDebtMin.value) },
+        { filterName: 'maxDebt', value: parseOptionValue(debtOptionEntries, selectedDebtMax.value) },
+        { filterName: 'minLoanScore', value: parseOptionValue(loanScoreOptionEntries, selectedLoanMin.value) },
+        { filterName: 'maxLoanScore', value: parseOptionValue(loanScoreOptionEntries, selectedLoanMax.value) }
+      ]
+
+      await Promise.all(payloads.map(payload => store.dispatch('updateFilter', payload)))
+      valueDebtOpen.value = false
+    }
+
+    const handleOutsideClick = (event) => {
+      const target = event.target
+
+      if (bedsBathsRef.value && !bedsBathsRef.value.contains(target)) {
+        bedsBathsOpen.value = false
+      }
+
+      if (valueDebtRef.value && !valueDebtRef.value.contains(target)) {
+        valueDebtOpen.value = false
+      }
     }
 
     onMounted(() => {
       document.addEventListener('click', handleOutsideClick)
+      syncValueDebtState()
+    })
+
+    watch(
+      () => store.state.filters,
+      () => syncValueDebtState(),
+      { deep: true }
+    )
+
+    watch(valueDebtOpen, (open) => {
+      if (open) {
+        syncValueDebtState()
+      }
     })
 
     onBeforeUnmount(() => {
@@ -336,13 +568,46 @@ export default {
       selectedBaths,
       useExactMatch,
       applyBedsBaths,
-      bedsBathsRef
+      bedsBathsRef,
+      valueDebtOpen,
+      toggleValueDebt,
+      applyValueDebt,
+      valueOptions,
+      debtOptions,
+      loanScoreOptions,
+      selectedArvMin,
+      selectedArvMax,
+      selectedDebtMin,
+      selectedDebtMax,
+      selectedLoanMin,
+      selectedLoanMax,
+      valueDebtRef
     }
   }
 }
 </script>
 
 <style scoped>
+.value-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d9e2;
+  border-radius: 12px;
+  background-color: #ffffff;
+  font-size: 0.85rem;
+  color: #142c40;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23617186' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+}
+
+.value-select:focus {
+  outline: none;
+  border-color: #1f527a;
+  box-shadow: 0 0 0 2px rgba(31, 82, 122, 0.15);
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.15s ease, transform 0.15s ease;

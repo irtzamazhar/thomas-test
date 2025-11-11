@@ -1,6 +1,5 @@
 import { createStore } from 'vuex'
 
-// Mock property data
 const mockProperties = [
   {
     id: 1,
@@ -15,6 +14,7 @@ const mockProperties = [
     buildYear: 1999,
     image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500&h=300&fit=crop',
     month: 'January',
+    loanScore: 720,
     zillowUrl: 'https://www.zillow.com/homedetails/80143132',
     lat: 33.3895,
     lng: -84.2945
@@ -32,6 +32,7 @@ const mockProperties = [
     buildYear: 1988,
     image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&h=300&fit=crop',
     month: 'February',
+    loanScore: 680,
     zillowUrl: 'https://www.zillow.com/homedetails/14843816',
     lat: 33.8712,
     lng: -84.6160
@@ -49,6 +50,7 @@ const mockProperties = [
     buildYear: 1998,
     image: 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500&h=300&fit=crop',
     month: 'March',
+    loanScore: 640,
     zillowUrl: 'https://www.zillow.com/homedetails/12345678',
     lat: 33.7490,
     lng: -84.3880
@@ -66,6 +68,7 @@ const mockProperties = [
     buildYear: 2005,
     image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500&h=300&fit=crop',
     month: 'April',
+    loanScore: 705,
     zillowUrl: 'https://www.zillow.com/homedetails/23456789',
     lat: 33.9526,
     lng: -84.5499
@@ -83,6 +86,7 @@ const mockProperties = [
     buildYear: 2010,
     image: 'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=500&h=300&fit=crop',
     month: 'May',
+    loanScore: 760,
     zillowUrl: 'https://www.zillow.com/homedetails/34567890',
     lat: 34.0232,
     lng: -84.3616
@@ -100,9 +104,118 @@ const mockProperties = [
     buildYear: 1995,
     image: 'https://images.unsplash.com/photo-1599427303058-f04cbcf4756f?w=500&h=300&fit=crop',
     month: 'June',
+    loanScore: 690,
     zillowUrl: 'https://www.zillow.com/homedetails/45678901',
     lat: 33.7748,
     lng: -84.2963
+  },
+  {
+    id: 7,
+    address: '2146 Brookview Drive, Austell, GA 30106',
+    county: 'Cobb',
+    price: 275000,
+    afterRepairValue: 355000,
+    foreclosureAmt: 210000,
+    beds: 4,
+    baths: 2,
+    sqft: 1980,
+    buildYear: 2002,
+    image: 'https://images.unsplash.com/photo-1600585154340-0ef3c08dcdb6?w=500&h=300&fit=crop',
+    month: 'July',
+    loanScore: 710,
+    zillowUrl: 'https://www.zillow.com/homedetails/56789012',
+    lat: 33.8124,
+    lng: -84.6256
+  },
+  {
+    id: 8,
+    address: '88 Peachtree Circle NE, Atlanta, GA 30309',
+    county: 'Fulton',
+    price: 420000,
+    afterRepairValue: 540000,
+    foreclosureAmt: 310000,
+    beds: 3,
+    baths: 2.5,
+    sqft: 2150,
+    buildYear: 2015,
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
+    month: 'August',
+    loanScore: 775,
+    zillowUrl: 'https://www.zillow.com/homedetails/67890123',
+    lat: 33.7905,
+    lng: -84.3831
+  },
+  {
+    id: 9,
+    address: '1572 Northlake Way, Tucker, GA 30084',
+    county: 'DeKalb',
+    price: 235000,
+    afterRepairValue: 315000,
+    foreclosureAmt: 190000,
+    beds: 3,
+    baths: 2,
+    sqft: 1725,
+    buildYear: 1992,
+    image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=500&h=300&fit=crop',
+    month: 'September',
+    loanScore: 655,
+    zillowUrl: 'https://www.zillow.com/homedetails/78901234',
+    lat: 33.8504,
+    lng: -84.2043
+  },
+  {
+    id: 10,
+    address: '1184 Summit Chase Drive, Loganville, GA 30052',
+    county: 'Gwinnett',
+    price: 315000,
+    afterRepairValue: 415000,
+    foreclosureAmt: 260000,
+    beds: 4,
+    baths: 3,
+    sqft: 2520,
+    buildYear: 2007,
+    image: 'https://images.unsplash.com/photo-1605276374104-0a114bb55c57?w=500&h=300&fit=crop',
+    month: 'October',
+    loanScore: 702,
+    zillowUrl: 'https://www.zillow.com/homedetails/89012345',
+    lat: 33.8445,
+    lng: -83.8968
+  },
+  {
+    id: 11,
+    address: '609 River Mist Drive, Suwanee, GA 30024',
+    county: 'Gwinnett',
+    price: 495000,
+    afterRepairValue: 610000,
+    foreclosureAmt: 350000,
+    beds: 5,
+    baths: 4,
+    sqft: 3150,
+    buildYear: 2013,
+    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&h=300&fit=crop',
+    month: 'November',
+    loanScore: 790,
+    zillowUrl: 'https://www.zillow.com/homedetails/90123456',
+    lat: 34.0498,
+    lng: -84.0719
+  },
+  {
+    id: 12,
+    address: '220 Kings Row, Peachtree City, GA 30269',
+    county: 'Fayette',
+    price: 365000,
+    afterRepairValue: 470000,
+    foreclosureAmt: 295000,
+    beds: 4,
+    baths: 3,
+    sqft: 2400,
+    buildYear: 2008,
+    image: 'https://images.unsplash.com/photo-1599423300746-b62533397364?w=500&h=300&fit=crop',
+    month: 'December',
+    loanScore: 735,
+    zillowUrl: 'https://www.zillow.com/homedetails/91234567',
+    lat: 33.3943,
+    lng: -84.5955
   }
 ]
 
@@ -119,9 +232,11 @@ export default createStore({
         minValue: null,
         maxValue: null,
         minDebt: null,
-        maxDebt: null
+        maxDebt: null,
+        minLoanScore: null,
+        maxLoanScore: null
       },
-      viewMode: 'tile', // 'list' or 'tile'
+      viewMode: 'tile',
       currentPage: 1,
       itemsPerPage: 6,
       savedSearches: [],
@@ -201,6 +316,30 @@ export default createStore({
         console.log('After month filter:', filtered.length, 'properties')
       }
       
+      if (state.filters.minValue) {
+        filtered = filtered.filter(p => p.afterRepairValue && p.afterRepairValue >= state.filters.minValue)
+      }
+
+      if (state.filters.maxValue) {
+        filtered = filtered.filter(p => p.afterRepairValue && p.afterRepairValue <= state.filters.maxValue)
+      }
+
+      if (state.filters.minDebt) {
+        filtered = filtered.filter(p => p.foreclosureAmt && p.foreclosureAmt >= state.filters.minDebt)
+      }
+
+      if (state.filters.maxDebt) {
+        filtered = filtered.filter(p => p.foreclosureAmt && p.foreclosureAmt <= state.filters.maxDebt)
+      }
+
+      if (state.filters.minLoanScore) {
+        filtered = filtered.filter(p => p.loanScore && p.loanScore >= state.filters.minLoanScore)
+      }
+
+      if (state.filters.maxLoanScore) {
+        filtered = filtered.filter(p => p.loanScore && p.loanScore <= state.filters.maxLoanScore)
+      }
+
       // Apply county filter
       if (state.filters.county && state.filters.county !== 'All') {
         filtered = filtered.filter(p => p.county === state.filters.county)
