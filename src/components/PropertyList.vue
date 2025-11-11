@@ -153,10 +153,11 @@
     
     <!-- Table View -->
     <div v-if="viewMode === 'list'" class="mb-8 bg-white rounded-lg shadow-sm overflow-x-auto">
-      <table class="w-full min-w-[800px]">
+      <table class="w-full min-w-[900px]">
         <thead class="bg-[#3a5a7a] text-white">
           <tr>
             <th class="text-left py-3 md:py-4 px-4 md:px-6 font-semibold text-xs md:text-sm">Address</th>
+            <th class="text-left py-3 md:py-4 px-3 md:px-4 font-semibold text-xs md:text-sm">Month</th>
             <th class="text-left py-3 md:py-4 px-3 md:px-4 font-semibold text-xs md:text-sm">
               Est. Value
               <svg class="inline-block ml-1 w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,6 +213,7 @@
                 </div>
               </div>
             </td>
+            <td class="py-3 md:py-4 px-3 md:px-4 text-gray-900 text-xs md:text-sm">{{ property.month || '-' }}</td>
             <td class="py-3 md:py-4 px-3 md:px-4 text-gray-900 font-medium text-xs md:text-sm">${{ formatPrice(property.afterRepairValue) }}</td>
             <td class="py-3 md:py-4 px-3 md:px-4 text-gray-900 text-xs md:text-sm">{{ property.beds || '-' }}</td>
             <td class="py-3 md:py-4 px-3 md:px-4 text-gray-900 text-xs md:text-sm">{{ property.baths || '-' }}</td>

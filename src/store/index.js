@@ -14,6 +14,7 @@ const mockProperties = [
     sqft: null,
     buildYear: 1999,
     image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500&h=300&fit=crop',
+    month: 'January',
     zillowUrl: 'https://www.zillow.com/homedetails/80143132',
     lat: 33.3895,
     lng: -84.2945
@@ -30,6 +31,7 @@ const mockProperties = [
     sqft: null,
     buildYear: 1988,
     image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&h=300&fit=crop',
+    month: 'February',
     zillowUrl: 'https://www.zillow.com/homedetails/14843816',
     lat: 33.8712,
     lng: -84.6160
@@ -46,6 +48,7 @@ const mockProperties = [
     sqft: 1850,
     buildYear: 1998,
     image: 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500&h=300&fit=crop',
+    month: 'March',
     zillowUrl: 'https://www.zillow.com/homedetails/12345678',
     lat: 33.7490,
     lng: -84.3880
@@ -62,6 +65,7 @@ const mockProperties = [
     sqft: 2100,
     buildYear: 2005,
     image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500&h=300&fit=crop',
+    month: 'April',
     zillowUrl: 'https://www.zillow.com/homedetails/23456789',
     lat: 33.9526,
     lng: -84.5499
@@ -78,6 +82,7 @@ const mockProperties = [
     sqft: 2850,
     buildYear: 2010,
     image: 'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=500&h=300&fit=crop',
+    month: 'May',
     zillowUrl: 'https://www.zillow.com/homedetails/34567890',
     lat: 34.0232,
     lng: -84.3616
@@ -94,6 +99,7 @@ const mockProperties = [
     sqft: 1650,
     buildYear: 1995,
     image: 'https://images.unsplash.com/photo-1599427303058-f04cbcf4756f?w=500&h=300&fit=crop',
+    month: 'June',
     zillowUrl: 'https://www.zillow.com/homedetails/45678901',
     lat: 33.7748,
     lng: -84.2963
@@ -190,6 +196,10 @@ export default createStore({
     filteredProperties: (state) => {
       let filtered = [...state.properties]
       console.log('Starting filter with', filtered.length, 'properties')
+      if (state.filters.month && state.filters.month !== 'All') {
+        filtered = filtered.filter(p => p.month === state.filters.month)
+        console.log('After month filter:', filtered.length, 'properties')
+      }
       
       // Apply county filter
       if (state.filters.county && state.filters.county !== 'All') {

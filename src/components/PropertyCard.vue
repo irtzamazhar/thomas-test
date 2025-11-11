@@ -16,7 +16,10 @@
     </div>
     
     <div class="p-3 flex-1">
-      <h3 class="text-sm font-semibold text-gray-900 mb-2 leading-tight">{{ property.address }}</h3>
+      <h3 class="text-sm font-semibold text-gray-900 mb-1 leading-tight">{{ property.address }}</h3>
+      <div class="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">
+        {{ property.month || 'N/A' }}
+      </div>
       
       <div class="grid grid-cols-2 gap-2">
         <div class="px-2.5 py-2 rounded bg-[#2c5282] text-white">

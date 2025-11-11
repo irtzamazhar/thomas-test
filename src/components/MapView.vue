@@ -203,6 +203,11 @@ export default {
       return current ? current.label : 'List'
     })
 
+    const formatCurrency = (value) => {
+      if (value === null || value === undefined) return '$-'
+      return `$${value.toLocaleString()}`
+    }
+
     const formatValue = (value) => {
       if (!value) return '-'
       if (value >= 1_000_000) {
@@ -226,6 +231,143 @@ export default {
     }
 
     const useAdvancedMarkers = () => Boolean(mapId && advancedMarkerClass.value && pinElementClass.value)
+
+    const getInfoWindowContent = (property) => {
+      const {
+        image,
+        county,
+        address,
+        afterRepairValue,
+        foreclosureAmt,
+        beds,
+        baths,
+        sqft,
+        buildYear
+      } = property
+
+      const safeImage = image || 'https://placehold.co/600x400?text=No+Image'
+      const safeCounty = county || 'Unknown'
+      const safeAddress = address || 'Address unavailable'
+      const safeARV = formatCurrency(afterRepairValue)
+      const safeMortgage = foreclosureAmt === null || foreclosureAmt === undefined ? '$-' : formatCurrency(foreclosureAmt)
+      const safeBeds = beds ?? '-'
+      const safeBaths = baths ?? '-'
+      const safeSqft = sqft ? sqft.toLocaleString() : '-'
+      const safeYear = buildYear ?? '-'
+      const safeMonth = property.month || 'N/A'
+
+      return `
+        <div style="
+          width: 340px;
+          border-radius: 24px;
+          overflow: hidden;
+          box-shadow: 0 18px 45px rgba(15, 42, 73, 0.2);
+          font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+          color: #123347;
+          margin-bottom: 28px;
+        ">
+          <div style="position: relative;">
+            <img src="${safeImage}" alt="${safeAddress}" style="display:block;width:97%;height:190px;object-fit:cover;">
+            <div style="
+              position:absolute;
+              top:18px;
+              left:18px;
+              background:#ffffff;
+              color:#0b2440;
+              border-radius:100px;
+              padding:6px 16px;
+              font-weight:600;
+              font-size:14px;
+              box-shadow:0 6px 16px rgba(0,0,0,0.12);
+            ">
+              ${safeCounty}
+            </div>
+            <div style="
+              position:absolute;
+              top:18px;
+              right:18px;
+              width:34px;
+              height:34px;
+              border-radius:50%;
+              background:rgba(255,255,255,0.9);
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              box-shadow:0 6px 16px rgba(0,0,0,0.12);
+            ">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#d3425b" stroke-width="1.6">
+                <path d="M10 17.5L3.5 11C1.5 9 1.5 5.5 3.5 3.5C5.5 1.5 9 1.5 10 3.5C11 1.5 14.5 1.5 16.5 3.5C18.5 5.5 18.5 9 16.5 11L10 17.5Z"/>
+              </svg>
+            </div>
+          </div>
+
+          <div style="padding:20px 22px 18px;background:#ffffff;">
+            <div style="font-size:13px;font-weight:700;color:#0d3154;line-height:1.4;margin-bottom:10px;">
+              ${safeAddress}
+            </div>
+            <div style="font-size:12px;font-weight:600;color:#1f4c7a;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px;">
+              Registered: ${safeMonth}
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0;">
+              <div style="
+                background:#274f7a;
+                color:#ffffff;
+                border-radius:12px;
+                padding:12px 14px;
+                display:flex;
+                flex-direction:column;
+                gap:4px;
+              ">
+                <span style="font-size:12px;font-weight:600;letter-spacing:0.02em;">Estimated Home Value</span>
+                <span style="font-size:20px;font-weight:700;">${safeARV}</span>
+              </div>
+              <div style="
+                background:#f2f4f7;
+                color:#1c2f43;
+                border-radius:12px;
+                padding:12px 14px;
+                display:flex;
+                flex-direction:column;
+                gap:4px;
+              ">
+                <span style="font-size:12px;font-weight:600;letter-spacing:0.02em;color:#5c6c7b;">Mortgage Amount</span>
+                <span style="font-size:20px;font-weight:700;">${safeMortgage}</span>
+              </div>
+            </div>
+
+            <div style="
+              display:grid;
+              grid-template-columns:repeat(4,1fr);
+              border:1px solid #e2e8f0;
+              border-radius:12px;
+              overflow:hidden;
+              background:#f9fafb;
+              margin-top: 10px;
+            ">
+              ${[
+                { label: 'Beds', value: safeBeds },
+                { label: 'Baths', value: safeBaths },
+                { label: 'Sq. Ft.', value: safeSqft },
+                { label: 'Built', value: safeYear }
+              ].map((item, index, arr) => `
+                <div style="
+                  padding:12px 10px;
+                  text-align:center;
+                  display:flex;
+                  flex-direction:column;
+                  gap:4px;
+                  ${index !== arr.length - 1 ? 'border-right:1px solid #e2e8f0;' : ''}
+                ">
+                  <span style="font-size:12px;color:#5c6c7b;font-weight:600;">${item.label}</span>
+                  <span style="font-size:16px;font-weight:700;color:#1a2f45;">${item.value}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `
+    }
 
     const createMarkers = () => {
       if (!map.value) return
@@ -269,13 +411,7 @@ export default {
 
         marker.addListener('click', () => {
           if (!infoWindow.value) return
-          infoWindow.value.setContent(`
-            <div class="gm-info">
-              <strong>${property.address}</strong>
-              <div>${property.beds || '-'} bd • ${property.baths || '-'} ba</div>
-              <div>After Repair Value: $${property.afterRepairValue ? property.afterRepairValue.toLocaleString() : '-'}</div>
-            </div>
-          `)
+          infoWindow.value.setContent(getInfoWindowContent(property))
           infoWindow.value.open({ anchor: marker, map: map.value })
         })
 
