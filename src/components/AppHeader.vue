@@ -2,7 +2,6 @@
   <header class="h-[70px] mb-[10px] bg-white border-b-2 border-[#eee]" style="box-shadow: rgba(201, 201, 201, 0.4) 0 2px 4px 2px;">
     <div class="flex items-center justify-between h-full px-4 md:px-6 lg:px-8">
       <div class="flex items-center gap-4 md:gap-6 lg:gap-8">
-        <!-- Hamburger Menu for Mobile -->
         <button 
           @click="toggleMenu"
           class="md:hidden flex flex-col gap-1.5 w-6 h-6 justify-center items-center"
@@ -35,14 +34,12 @@
       </div>
     </div>
 
-    <!-- Mobile Menu Overlay -->
     <div 
       v-if="isMenuOpen"
       class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
       @click="toggleMenu"
     ></div>
 
-    <!-- Mobile Menu Sidebar -->
     <transition name="slide">
       <nav 
         v-if="isMenuOpen"

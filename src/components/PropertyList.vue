@@ -9,7 +9,6 @@
         <div class="flex items-center gap-2 md:gap-3">
           <span class="text-xs md:text-sm text-gray-700 font-medium">View</span>
           
-          <!-- Toggle Switch -->
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" :checked="viewMode === 'tile'" @change="toggleView" class="sr-only peer">
             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -260,7 +259,6 @@
         </button>
       </div>
     
-    <!-- Table View -->
     <div v-if="viewMode === 'list'" class="mb-8 bg-white rounded-lg shadow-sm overflow-x-auto">
       <table class="w-full min-w-[900px]">
         <thead class="bg-[#3a5a7a] text-white">
@@ -333,7 +331,6 @@
       </table>
     </div>
 
-    <!-- Grid View -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 mb-8">
       <PropertyCard 
         v-for="property in paginatedProperties" 
