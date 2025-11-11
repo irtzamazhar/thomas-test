@@ -3,78 +3,103 @@
     <div ref="mapElement" class="map-canvas"></div>
 
     <div class="map-toolbar">
-      <div class="toolbar-chip">
-        <label class="toolbar-label" for="county">County</label>
-        <select id="county" v-model="selectedCounty" @change="updateCountyFilter" class="toolbar-select">
-          <option value="All">All Counties</option>
-          <option v-for="county in counties.filter(c => c !== 'All')" :key="county" :value="county">
-            {{ county }}
-          </option>
-        </select>
-      </div>
-
-      <div class="toolbar-chip">
-        <label class="toolbar-label" for="month">Month</label>
-        <select id="month" v-model="selectedMonth" @change="updateMonthFilter" class="toolbar-select">
-          <option value="All">All Months</option>
-          <option value="January">January</option>
-          <option value="February">February</option>
-          <option value="March">March</option>
-          <option value="April">April</option>
-          <option value="May">May</option>
-          <option value="June">June</option>
-          <option value="July">July</option>
-          <option value="August">August</option>
-          <option value="September">September</option>
-          <option value="October">October</option>
-          <option value="November">November</option>
-          <option value="December">December</option>
-        </select>
-      </div>
-
-      <div class="toolbar-chip">
-        <label class="toolbar-label" for="list">List</label>
-        <select id="list" v-model="selectedList" @change="updateListFilter" class="toolbar-select">
-          <option value="All">All Types</option>
-          <option value="Residential">Residential</option>
-          <option value="Commercial">Commercial</option>
-          <option value="Land">Land</option>
-        </select>
-      </div>
-    </div>
+      <button class="toolbar-pill" @click="toggleToolbarDropdown('county')">
+        {{ selectedCountyLabel }}
+        <svg width="12" height="7" viewBox="0 0 10 6" fill="none">
+          <path d="M1 1L5 5L9 1" stroke="#00384f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <transition name="fade">
+          <div
+            v-if="openDropdown === 'county'"
+            class="toolbar-dropdown"
+          >
+            <button
+              v-for="option in countyOptions"
+              :key="option.value"
+              @click="selectToolbarOption('county', option)"
+              :class="['dropdown-option', option.value === selectedCounty ? 'dropdown-option--active' : '']"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+        </transition>
+      </button>
+      <button class="toolbar-pill" @click="toggleToolbarDropdown('month')">
+        {{ selectedMonthLabel }}
+        <svg width="12" height="7" viewBox="0 0 10 6" fill="none">
+          <path d="M1 1L5 5L9 1" stroke="#00384f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <transition name="fade">
+          <div
+            v-if="openDropdown === 'month'"
+            class="toolbar-dropdown"
+          >
+            <button
+              v-for="option in monthOptions"
+              :key="option.value"
+              @click="selectToolbarOption('month', option)"
+              :class="['dropdown-option', option.value === selectedMonth ? 'dropdown-option--active' : '']"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+        </transition>
+      </button>
+      <button class="toolbar-pill" @click="toggleToolbarDropdown('list')">
+        {{ selectedListLabel }}
+        <svg width="12" height="7" viewBox="0 0 10 6" fill="none">
+          <path d="M1 1L5 5L9 1" stroke="#00384f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <transition name="fade">
+          <div
+            v-if="openDropdown === 'list'"
+            class="toolbar-dropdown"
+          >
+            <button
+              v-for="option in listOptions"
+              :key="option.value"
+              @click="selectToolbarOption('list', option)"
+              :class="['dropdown-option', option.value === selectedList ? 'dropdown-option--active' : '']"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+        </transition>
+      </button>
+        </div>
 
     <div class="map-type-toggle">
-      <button
+          <button 
         :class="['toggle-btn', mapType === 'roadmap' ? 'toggle-btn--active' : '']"
         @click="setMapType('roadmap')"
-      >
-        Map
-      </button>
-      <button
+          >
+            Map
+          </button>
+          <button 
         :class="['toggle-btn', mapType === 'satellite' ? 'toggle-btn--active' : '']"
         @click="setMapType('satellite')"
-      >
-        Satellite
-      </button>
-    </div>
+          >
+            Satellite
+          </button>
+        </div>
 
     <div class="map-controls">
       <button class="control-btn" @click="zoomIn" title="Zoom in">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
+              <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
       <button class="control-btn" @click="zoomOut" title="Zoom out">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
+              <path d="M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
       <button class="control-btn control-btn--square" @click="resetView" title="Reset view">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M2 2h4M14 2h-4M2 14h4M14 14h-4M2 2v4M14 2v4M2 14v-4M14 14v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 2h4M14 2h-4M2 14h4M14 14h-4M2 2v4M14 2v4M2 14v-4M14 14v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
 
     <transition name="fade">
       <div v-if="mapError" class="map-error">
@@ -108,6 +133,7 @@ export default {
     const advancedMarkerClass = ref(null)
     const mapError = ref('')
     const infoWindow = ref(null)
+    const openDropdown = ref(null)
     const DEFAULT_CENTER = { lat: 33.749, lng: -84.388 }
     const DEFAULT_ZOOM = 9
     
@@ -132,6 +158,49 @@ export default {
       })
     }
     
+    const countyOptions = computed(() => [
+      { label: 'County', value: 'All' },
+      ...counties.value.filter(c => c !== 'All').map(c => ({ label: c, value: c }))
+    ])
+
+    const monthOptions = [
+      { label: 'Month', value: 'All' },
+      { label: 'January', value: 'January' },
+      { label: 'February', value: 'February' },
+      { label: 'March', value: 'March' },
+      { label: 'April', value: 'April' },
+      { label: 'May', value: 'May' },
+      { label: 'June', value: 'June' },
+      { label: 'July', value: 'July' },
+      { label: 'August', value: 'August' },
+      { label: 'September', value: 'September' },
+      { label: 'October', value: 'October' },
+      { label: 'November', value: 'November' },
+      { label: 'December', value: 'December' }
+    ]
+
+    const listOptions = [
+      { label: 'List', value: 'All' },
+      { label: 'Residential', value: 'Residential' },
+      { label: 'Commercial', value: 'Commercial' },
+      { label: 'Land', value: 'Land' }
+    ]
+
+    const selectedCountyLabel = computed(() => {
+      const current = countyOptions.value.find(o => o.value === selectedCounty.value)
+      return current ? current.label : 'County'
+    })
+
+    const selectedMonthLabel = computed(() => {
+      const current = monthOptions.find(o => o.value === selectedMonth.value)
+      return current ? current.label : 'Month'
+    })
+
+    const selectedListLabel = computed(() => {
+      const current = listOptions.find(o => o.value === selectedList.value)
+      return current ? current.label : 'List'
+    })
+
     const formatValue = (value) => {
       if (!value) return '-'
       if (value >= 1_000_000) {
@@ -274,13 +343,41 @@ export default {
       fitMapToMarkers()
     }
 
+    const toggleToolbarDropdown = (key) => {
+      openDropdown.value = openDropdown.value === key ? null : key
+    }
+
+    const selectToolbarOption = (key, option) => {
+      if (key === 'county') {
+        selectedCounty.value = option.value
+        updateCountyFilter()
+      } else if (key === 'month') {
+        selectedMonth.value = option.value
+        updateMonthFilter()
+      } else if (key === 'list') {
+        selectedList.value = option.value
+        updateListFilter()
+      }
+      openDropdown.value = null
+    }
+
+    const handleOutsideClick = (event) => {
+      if (!openDropdown.value) return
+      const toolbar = mapElement.value?.parentElement?.querySelector('.map-toolbar')
+      if (toolbar && !toolbar.contains(event.target)) {
+        openDropdown.value = null
+      }
+    }
+
     onMounted(() => {
       initMap()
+      document.addEventListener('click', handleOutsideClick)
     })
 
     onBeforeUnmount(() => {
       clearMarkers()
       infoWindow.value?.close()
+      document.removeEventListener('click', handleOutsideClick)
     })
 
     watch(properties, () => {
@@ -310,7 +407,16 @@ export default {
       setMapType,
       zoomIn,
       zoomOut,
-      resetView
+      resetView,
+      toggleToolbarDropdown,
+      selectToolbarOption,
+      openDropdown,
+      countyOptions,
+      monthOptions,
+      listOptions,
+      selectedCountyLabel,
+      selectedMonthLabel,
+      selectedListLabel
     }
   }
 }
@@ -338,43 +444,89 @@ export default {
   gap: 12px;
   align-items: center;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   border-radius: 9999px;
-  box-shadow: 0 10px 30px rgba(15, 41, 61, 0.15);
+  box-shadow: 0 22px 45px rgba(3, 39, 59, 0.16);
   z-index: 20;
-  flex-wrap: wrap;
+  padding: 6px 10px;
+  flex-wrap: nowrap;
 }
 
-.toolbar-chip {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 120px;
-}
-
-.toolbar-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #375d7d;
-  font-weight: 700;
-}
-
-.toolbar-select {
+.toolbar-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 32px;
+  border-radius: 9999px;
   border: none;
   background: transparent;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #1c2a38;
-  padding-right: 18px;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23375d7d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.25rem center;
+  color: #1e2f3a;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: relative;
 }
 
-.toolbar-select:focus {
-  outline: none;
+.toolbar-pill + .toolbar-pill::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 24px;
+  background: rgba(6, 53, 72, 0.18);
+}
+
+.toolbar-pill svg {
+  flex-shrink: 0;
+}
+
+.toolbar-pill:hover {
+  color: #0b2738;
+}
+
+.toolbar-pill {
+  position: relative;
+}
+
+.toolbar-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 25px 60px rgba(16, 46, 66, 0.2);
+  padding: 10px 8px;
+  display: grid;
+  gap: 4px;
+  z-index: 10;
+  min-width: 180px;
+}
+
+.dropdown-option {
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #364856;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-option:hover {
+  background: rgba(15, 72, 108, 0.08);
+  color: #0f486c;
+}
+
+.dropdown-option--active {
+  background: rgba(15, 108, 188, 0.12);
+  color: #0f6cbc;
 }
 
 .map-type-toggle {
