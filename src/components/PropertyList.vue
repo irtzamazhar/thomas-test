@@ -33,7 +33,7 @@
       </div>
     </div>
     
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+    <div class="relative mb-5">
       <div class="flex flex-wrap gap-2 md:gap-3">
         <div class="relative" ref="bedsBathsRef">
           <button
@@ -241,8 +241,9 @@
           </svg>
         </button>
       </div>
+    </div>
       
-      <div class="flex flex-wrap gap-2 md:gap-3">
+    <div class="flex flex-wrap gap-2 md:gap-3 mb-4">
         <button 
           @click="handleSaveSearch"
           class="py-2 px-3 md:px-4 text-xs md:text-sm font-medium rounded-md cursor-pointer flex items-center gap-2 transition-all bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
@@ -258,7 +259,6 @@
           Export List
         </button>
       </div>
-    </div>
     
     <!-- Table View -->
     <div v-if="viewMode === 'list'" class="mb-8 bg-white rounded-lg shadow-sm overflow-x-auto">
