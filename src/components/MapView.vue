@@ -131,11 +131,13 @@ export default {
     const map = ref(null)
     const markers = ref([])
     const advancedMarkerClass = ref(null)
+    const pinElementClass = ref(null)
     const mapError = ref('')
     const infoWindow = ref(null)
     const openDropdown = ref(null)
     const DEFAULT_CENTER = { lat: 33.749, lng: -84.388 }
     const DEFAULT_ZOOM = 9
+    const mapId = import.meta.env.VITE_GOOGLE_MAP_ID || ''
     
     const updateCountyFilter = () => {
       store.dispatch('updateFilter', {
@@ -213,27 +215,57 @@ export default {
     }
 
     const clearMarkers = () => {
-      markers.value.forEach(marker => marker.map = null)
+      markers.value.forEach(marker => {
+        if (typeof marker.setMap === 'function') {
+          marker.setMap(null)
+        } else {
+          marker.map = null
+        }
+      })
       markers.value = []
     }
 
+    const useAdvancedMarkers = () => Boolean(mapId && advancedMarkerClass.value && pinElementClass.value)
+
     const createMarkers = () => {
-      if (!map.value || !advancedMarkerClass.value) return
+      if (!map.value) return
       clearMarkers()
 
       properties.value.forEach(property => {
         if (!property.lat || !property.lng) return
         const priceLabel = formatValue(property.afterRepairValue || property.price)
 
-        const markerContent = document.createElement('div')
-        markerContent.className = 'gm-price-marker'
-        markerContent.textContent = priceLabel
+        let marker
 
-        const marker = new advancedMarkerClass.value({
-          map: map.value,
-          position: { lat: property.lat, lng: property.lng },
-          content: markerContent
-        })
+        if (useAdvancedMarkers()) {
+          const pin = new pinElementClass.value({
+            glyph: priceLabel,
+            glyphColor: '#ffffff',
+            background: '#0f6cbc',
+            borderColor: '#ffffff',
+            scale: 1.05
+          })
+
+          marker = new advancedMarkerClass.value({
+            map: map.value,
+            position: { lat: property.lat, lng: property.lng },
+            content: pin.element
+          })
+        } else {
+          marker = new window.google.maps.Marker({
+            map: map.value,
+            position: { lat: property.lat, lng: property.lng },
+            icon: {
+              path: window.google.maps.SymbolPath.CIRCLE,
+              scale: 10,
+              fillColor: '#0f6cbc',
+              fillOpacity: 1,
+              strokeColor: '#ffffff',
+              strokeWeight: 2
+            },
+            title: `${property.address} • $${property.afterRepairValue ? property.afterRepairValue.toLocaleString() : priceLabel}`
+          })
+        }
 
         marker.addListener('click', () => {
           if (!infoWindow.value) return
@@ -304,11 +336,13 @@ export default {
         const { Map } = await window.google.maps.importLibrary('maps')
         const markerLib = await window.google.maps.importLibrary('marker')
         advancedMarkerClass.value = markerLib.AdvancedMarkerElement
+        pinElementClass.value = markerLib.PinElement
         infoWindow.value = new window.google.maps.InfoWindow()
 
         map.value = new Map(mapElement.value, {
           center: DEFAULT_CENTER,
           zoom: DEFAULT_ZOOM,
+          ...(mapId ? { mapId } : {}),
           mapTypeId: mapType.value,
           disableDefaultUI: true,
           clickableIcons: false,
