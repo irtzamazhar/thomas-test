@@ -2,6 +2,7 @@
   <div class="map-wrapper">
     <div ref="mapElement" class="map-canvas"></div>
 
+    <!-- Floating toolbar overlays filters directly on top of the map -->
     <div class="map-toolbar">
       <button class="toolbar-pill" @click="toggleToolbarDropdown('county')">
         {{ selectedCountyLabel }}
@@ -114,14 +115,17 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 
+const MODULE = 'properties'
+
+// Single shared loader promise prevents multiple Google Maps script injections
 let googleMapsLoader
 
 export default {
   name: 'MapView',
   setup() {
     const store = useStore()
-    const properties = computed(() => store.getters.filteredProperties)
-    const counties = computed(() => store.getters.counties)
+    const properties = computed(() => store.getters[`${MODULE}/filteredProperties`])
+    const counties = computed(() => store.getters[`${MODULE}/counties`])
     
     const selectedCounty = ref('All')
     const selectedMonth = ref('All')
@@ -138,23 +142,24 @@ export default {
     const DEFAULT_CENTER = { lat: 33.749, lng: -84.388 }
     const DEFAULT_ZOOM = 9
     const mapId = import.meta.env.VITE_GOOGLE_MAP_ID || ''
+    const filters = computed(() => store.state[MODULE].filters)
     
     const updateCountyFilter = () => {
-      store.dispatch('updateFilter', {
+      store.dispatch(`${MODULE}/updateFilter`, {
         filterName: 'county',
         value: selectedCounty.value
       })
     }
     
     const updateMonthFilter = () => {
-      store.dispatch('updateFilter', {
+      store.dispatch(`${MODULE}/updateFilter`, {
         filterName: 'month',
         value: selectedMonth.value
       })
     }
     
     const updateListFilter = () => {
-      store.dispatch('updateFilter', {
+      store.dispatch(`${MODULE}/updateFilter`, {
         filterName: 'list',
         value: selectedList.value
       })
@@ -230,6 +235,7 @@ export default {
       markers.value = []
     }
 
+    // Use advanced markers when map styling is available, fall back to classic pins otherwise
     const useAdvancedMarkers = () => Boolean(mapId && advancedMarkerClass.value && pinElementClass.value)
 
     const getInfoWindowContent = (property) => {
@@ -443,7 +449,9 @@ export default {
         return googleMapsLoader
       }
 
+      // Defer script injection to keep bundle lean and handle failure paths gracefully
       googleMapsLoader = new Promise((resolve, reject) => {
+
         if (window.google && window.google.maps) {
           resolve(window.google.maps)
           return
@@ -550,11 +558,17 @@ export default {
       document.removeEventListener('click', handleOutsideClick)
     })
 
+    watch(filters, (newFilters) => {
+      selectedCounty.value = newFilters.county ?? 'All'
+      selectedMonth.value = newFilters.month ?? 'All'
+      selectedList.value = newFilters.list ?? 'All'
+    }, { immediate: true, deep: true }) // keep dropdown labels synced with store even when filters change elsewhere
+
     watch(properties, () => {
       if (!map.value) return
       createMarkers()
       fitMapToMarkers()
-    })
+    }) // recompute markers whenever the filtered dataset changes
 
     watch(mapType, (type) => {
       if (map.value) {
@@ -814,7 +828,7 @@ export default {
   }
 }
 
-:deep(.gm-price-marker) {
+::deep(.gm-price-marker) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -830,11 +844,11 @@ export default {
   border: 3px solid rgba(255, 255, 255, 0.85);
 }
 
-:deep(.gm-price-marker:hover) {
+::deep(.gm-price-marker:hover) {
   transform: scale(1.05);
 }
 
-:deep(.gm-info) {
+::deep(.gm-info) {
   font-size: 0.85rem;
   color: #1e2b36;
   display: grid;
@@ -842,7 +856,7 @@ export default {
   max-width: 220px;
 }
 
-:deep(.gm-style-iw-d) {
+::deep(.gm-style-iw-d) {
   overflow: hidden !important;
 }
 </style>

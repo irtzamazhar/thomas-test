@@ -1,5 +1,6 @@
 <template>
   <div class="p-3 md:p-4 lg:p-5 bg-white h-full">
+    <!-- View toggle header keeps number of visible items in sync -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
       <div>
         <h2 class="text-sm md:text-base text-gray-600 font-normal m-0">Showing {{ totalProperties }} properties</h2>
@@ -32,6 +33,7 @@
       </div>
     </div>
     
+    <!-- Filter toolbar hosts dropdown experiences (beds/baths, value ranges, etc.) -->
     <div class="relative mb-5">
       <div class="flex flex-wrap gap-2 md:gap-3">
         <div class="relative" ref="bedsBathsRef">
@@ -242,6 +244,7 @@
       </div>
     </div>
       
+    <!-- Secondary toolbar for saved searches + exports -->
     <div class="flex flex-wrap gap-2 md:gap-3 mb-4">
         <button 
           @click="handleSaveSearch"
@@ -259,6 +262,7 @@
         </button>
       </div>
     
+    <!-- List mode: data table -->
     <div v-if="viewMode === 'list'" class="mb-8 bg-white rounded-lg shadow-sm overflow-x-auto">
       <table class="w-full min-w-[900px]">
         <thead class="bg-[#3a5a7a] text-white">
@@ -331,6 +335,7 @@
       </table>
     </div>
 
+    <!-- Tile mode: card grid -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 mb-8">
       <PropertyCard 
         v-for="property in paginatedProperties" 
@@ -346,8 +351,86 @@
 <script>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import PropertyCard from './PropertyCard.vue'
-import Pagination from './Pagination.vue'
+import PropertyCard from '../common/PropertyCard.vue'
+import Pagination from '../common/Pagination.vue'
+
+const MODULE = 'properties'
+
+// Option matrices drive the dropdowns and keep presentation strings separate from numbers
+const bedsOptionEntries = [
+  ['Any', null],
+  ['1+', 1],
+  ['2+', 2],
+  ['3+', 3],
+  ['4+', 4],
+  ['5+', 5]
+]
+
+const bathsOptionEntries = [
+  ['Any', null],
+  ['1+', 1],
+  ['1.5+', 1.5],
+  ['2+', 2],
+  ['3+', 3],
+  ['4+', 4]
+]
+
+const valueOptionEntries = [
+  ['No Min', null],
+  ['$50K', 50_000],
+  ['$100K', 100_000],
+  ['$150K', 150_000],
+  ['$200K', 200_000],
+  ['$250K', 250_000],
+  ['$300K', 300_000],
+  ['$350K', 350_000],
+  ['$400K', 400_000],
+  ['$500K', 500_000],
+  ['$750K', 750_000],
+  ['$1M', 1_000_000],
+  ['$1.5M', 1_500_000],
+  ['$2M', 2_000_000],
+  ['$5M', 5_000_000],
+  ['No Max', null]
+]
+
+const debtOptionEntries = [
+  ['No Min', null],
+  ['$10K', 10_000],
+  ['$25K', 25_000],
+  ['$50K', 50_000],
+  ['$75K', 75_000],
+  ['$100K', 100_000],
+  ['$150K', 150_000],
+  ['$200K', 200_000],
+  ['$250K', 250_000],
+  ['$500K', 500_000],
+  ['No Max', null]
+]
+
+const loanScoreOptionEntries = [
+  ['No Min', null],
+  ['500', 500],
+  ['550', 550],
+  ['600', 600],
+  ['650', 650],
+  ['700', 700],
+  ['750', 750],
+  ['800', 800],
+  ['850', 850],
+  ['No Max', null]
+]
+
+const entryToOption = (entries, value, fallback) => {
+  if (value === null || value === undefined) return fallback
+  const match = entries.find(([, val]) => val === value)
+  return match ? match[0] : fallback
+}
+
+const optionToValue = (entries, option) => {
+  const match = entries.find(([label]) => label === option)
+  return match ? match[1] : null
+}
 
 export default {
   name: 'PropertyList',
@@ -357,88 +440,45 @@ export default {
   },
   setup() {
     const store = useStore()
-    
-    const paginatedProperties = computed(() => store.getters.paginatedProperties)
-    const totalProperties = computed(() => store.getters.totalProperties)
-    const viewMode = computed(() => store.state.viewMode)
-    
+
+    const paginatedProperties = computed(() => store.getters[`${MODULE}/paginatedProperties`])
+    const totalProperties = computed(() => store.getters[`${MODULE}/totalProperties`])
+    const viewMode = computed(() => store.getters[`${MODULE}/viewMode`])
+    const filters = computed(() => store.state[MODULE].filters)
+
     const setView = (mode) => {
-      store.dispatch('setViewMode', mode)
+      store.dispatch(`${MODULE}/setViewMode`, mode)
     }
-    
+
     const toggleView = () => {
       const newMode = viewMode.value === 'list' ? 'tile' : 'list'
-      store.dispatch('setViewMode', newMode)
+      store.dispatch(`${MODULE}/setViewMode`, newMode)
     }
-    
+
     const handleSaveSearch = () => {
-      store.dispatch('saveSearch')
+      store.dispatch(`${MODULE}/saveSearch`)
       alert('Search saved successfully!')
     }
-    
+
     const toggleFavorite = (propertyId) => {
-      store.dispatch('toggleFavorite', propertyId)
+      store.dispatch(`${MODULE}/toggleFavorite`, propertyId)
     }
-    
+
     const formatPrice = (price) => {
       if (!price) return '-'
       return price.toLocaleString()
     }
+
     const bedsBathsOpen = ref(false)
     const bedsBathsRef = ref(null)
-    const bedsOptions = ['Any', '1+', '2+', '3+', '4+', '5+']
-    const bathsOptions = ['Any', '1+', '1.5+', '2+', '3+', '4+']
+    const bedsOptions = bedsOptionEntries.map(([label]) => label)
+    const bathsOptions = bathsOptionEntries.map(([label]) => label)
     const selectedBeds = ref('Any')
     const selectedBaths = ref('Any')
     const useExactMatch = ref(false)
+
     const valueDebtOpen = ref(false)
     const valueDebtRef = ref(null)
-
-    const valueOptionEntries = [
-      ['No Min', null],
-      ['$50K', 50_000],
-      ['$100K', 100_000],
-      ['$150K', 150_000],
-      ['$200K', 200_000],
-      ['$250K', 250_000],
-      ['$300K', 300_000],
-      ['$350K', 350_000],
-      ['$400K', 400_000],
-      ['$500K', 500_000],
-      ['$750K', 750_000],
-      ['$1M', 1_000_000],
-      ['$1.5M', 1_500_000],
-      ['$2M', 2_000_000],
-      ['$5M', 5_000_000],
-      ['No Max', null]
-    ]
-
-    const debtOptionEntries = [
-      ['No Min', null],
-      ['$10K', 10_000],
-      ['$25K', 25_000],
-      ['$50K', 50_000],
-      ['$75K', 75_000],
-      ['$100K', 100_000],
-      ['$150K', 150_000],
-      ['$200K', 200_000],
-      ['$250K', 250_000],
-      ['$500K', 500_000],
-      ['No Max', null]
-    ]
-
-    const loanScoreOptionEntries = [
-      ['No Min', null],
-      ['500', 500],
-      ['550', 550],
-      ['600', 600],
-      ['650', 650],
-      ['700', 700],
-      ['750', 750],
-      ['800', 800],
-      ['850', 850],
-      ['No Max', null]
-    ]
 
     const valueOptions = valueOptionEntries.map(([label]) => label)
     const debtOptions = debtOptionEntries.map(([label]) => label)
@@ -451,32 +491,25 @@ export default {
     const selectedLoanMin = ref('No Min')
     const selectedLoanMax = ref('No Max')
 
-    const findOptionByValue = (entries, value, fallback) => {
-      if (value === null || value === undefined) return fallback
-      const entry = entries.find(([, val]) => val === value)
-      return entry ? entry[0] : fallback
-    }
-
-    const parseOptionValue = (entries, option, isMax = false) => {
-      if (option === 'No Min' || option === 'No Max') return null
-      const entry = entries.find(([label]) => label === option)
-      return entry ? entry[1] : null
+    const syncBedsBathsState = () => {
+      selectedBeds.value = entryToOption(bedsOptionEntries, filters.value.beds, 'Any')
+      selectedBaths.value = entryToOption(bathsOptionEntries, filters.value.baths, 'Any')
     }
 
     const syncValueDebtState = () => {
-      const filters = store.state.filters
-      selectedArvMin.value = findOptionByValue(valueOptionEntries, filters.minValue, 'No Min')
-      selectedArvMax.value = findOptionByValue(valueOptionEntries, filters.maxValue, 'No Max')
-      selectedDebtMin.value = findOptionByValue(debtOptionEntries, filters.minDebt, 'No Min')
-      selectedDebtMax.value = findOptionByValue(debtOptionEntries, filters.maxDebt, 'No Max')
-      selectedLoanMin.value = findOptionByValue(loanScoreOptionEntries, filters.minLoanScore, 'No Min')
-      selectedLoanMax.value = findOptionByValue(loanScoreOptionEntries, filters.maxLoanScore, 'No Max')
+      selectedArvMin.value = entryToOption(valueOptionEntries, filters.value.minValue, 'No Min')
+      selectedArvMax.value = entryToOption(valueOptionEntries, filters.value.maxValue, 'No Max')
+      selectedDebtMin.value = entryToOption(debtOptionEntries, filters.value.minDebt, 'No Min')
+      selectedDebtMax.value = entryToOption(debtOptionEntries, filters.value.maxDebt, 'No Max')
+      selectedLoanMin.value = entryToOption(loanScoreOptionEntries, filters.value.minLoanScore, 'No Min')
+      selectedLoanMax.value = entryToOption(loanScoreOptionEntries, filters.value.maxLoanScore, 'No Max')
     }
 
     const toggleBedsBaths = () => {
       bedsBathsOpen.value = !bedsBathsOpen.value
       if (bedsBathsOpen.value) {
         valueDebtOpen.value = false
+        syncBedsBathsState()
       }
     }
 
@@ -488,7 +521,20 @@ export default {
       selectedBaths.value = option
     }
 
-    const applyBedsBaths = () => {
+    const applyBedsBaths = async () => {
+      const bedsValue = optionToValue(bedsOptionEntries, selectedBeds.value)
+      const bathsValue = optionToValue(bathsOptionEntries, selectedBaths.value)
+
+      await store.dispatch(`${MODULE}/updateFilter`, {
+        filterName: 'beds',
+        value: bedsValue
+      })
+
+      await store.dispatch(`${MODULE}/updateFilter`, {
+        filterName: 'baths',
+        value: bathsValue
+      })
+
       bedsBathsOpen.value = false
     }
 
@@ -496,20 +542,21 @@ export default {
       valueDebtOpen.value = !valueDebtOpen.value
       if (valueDebtOpen.value) {
         bedsBathsOpen.value = false
+        syncValueDebtState()
       }
     }
 
     const applyValueDebt = async () => {
       const payloads = [
-        { filterName: 'minValue', value: parseOptionValue(valueOptionEntries, selectedArvMin.value) },
-        { filterName: 'maxValue', value: parseOptionValue(valueOptionEntries, selectedArvMax.value) },
-        { filterName: 'minDebt', value: parseOptionValue(debtOptionEntries, selectedDebtMin.value) },
-        { filterName: 'maxDebt', value: parseOptionValue(debtOptionEntries, selectedDebtMax.value) },
-        { filterName: 'minLoanScore', value: parseOptionValue(loanScoreOptionEntries, selectedLoanMin.value) },
-        { filterName: 'maxLoanScore', value: parseOptionValue(loanScoreOptionEntries, selectedLoanMax.value) }
+        { filterName: 'minValue', value: optionToValue(valueOptionEntries, selectedArvMin.value) },
+        { filterName: 'maxValue', value: optionToValue(valueOptionEntries, selectedArvMax.value) },
+        { filterName: 'minDebt', value: optionToValue(debtOptionEntries, selectedDebtMin.value) },
+        { filterName: 'maxDebt', value: optionToValue(debtOptionEntries, selectedDebtMax.value) },
+        { filterName: 'minLoanScore', value: optionToValue(loanScoreOptionEntries, selectedLoanMin.value) },
+        { filterName: 'maxLoanScore', value: optionToValue(loanScoreOptionEntries, selectedLoanMax.value) }
       ]
 
-      await Promise.all(payloads.map(payload => store.dispatch('updateFilter', payload)))
+      await Promise.all(payloads.map(payload => store.dispatch(`${MODULE}/updateFilter`, payload)))
       valueDebtOpen.value = false
     }
 
@@ -527,14 +574,14 @@ export default {
 
     onMounted(() => {
       document.addEventListener('click', handleOutsideClick)
+      syncBedsBathsState()
       syncValueDebtState()
     })
 
-    watch(
-      () => store.state.filters,
-      () => syncValueDebtState(),
-      { deep: true }
-    )
+    watch(filters, () => {
+      syncBedsBathsState()
+      syncValueDebtState()
+    }, { deep: true })
 
     watch(valueDebtOpen, (open) => {
       if (open) {
@@ -616,4 +663,3 @@ export default {
   transform: translateY(-4px);
 }
 </style>
-

@@ -1,4 +1,5 @@
 <template>
+  <!-- Responsive pager shared by list + grid views -->
   <div class="flex flex-col sm:flex-row justify-between items-center py-4 md:py-6 gap-3">
     <div class="text-xs md:text-sm text-gray-500 font-medium">
       Showing page {{ currentPage }} of {{ totalPages }} pages
@@ -39,14 +40,17 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 
+const MODULE = 'properties'
+
 export default {
   name: 'Pagination',
   setup() {
     const store = useStore()
     
-    const currentPage = computed(() => store.state.currentPage)
-    const totalPages = computed(() => store.getters.totalPages)
+    const currentPage = computed(() => store.state[MODULE].currentPage)
+    const totalPages = computed(() => store.getters[`${MODULE}/totalPages`])
     
+    // Visible pager buttons clamp around the active page to avoid long pagination bars
     const visiblePages = computed(() => {
       const pages = []
       const maxVisible = 5
@@ -66,7 +70,7 @@ export default {
     
     const goToPage = (page) => {
       if (page >= 1 && page <= totalPages.value) {
-        store.dispatch('setPage', page)
+        store.dispatch(`${MODULE}/setPage`, page)
       }
     }
     
@@ -79,4 +83,3 @@ export default {
   }
 }
 </script>
-

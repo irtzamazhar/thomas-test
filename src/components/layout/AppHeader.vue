@@ -1,4 +1,5 @@
 <template>
+  <!-- Fixed-height responsive header with mobile drawer fallback -->
   <header class="h-[70px] mb-[10px] bg-white border-b-2 border-[#eee]" style="box-shadow: rgba(201, 201, 201, 0.4) 0 2px 4px 2px;">
     <div class="flex items-center justify-between h-full px-4 md:px-6 lg:px-8">
       <div class="flex items-center gap-4 md:gap-6 lg:gap-8">
@@ -68,23 +69,14 @@
   </header>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue'
 
-export default {
-  name: 'AppHeader',
-  setup() {
-    const isMenuOpen = ref(false)
+const isMenuOpen = ref(false)
 
-    const toggleMenu = () => {
-      isMenuOpen.value = !isMenuOpen.value
-    }
-
-    return {
-      isMenuOpen,
-      toggleMenu
-    }
-  }
+// Simple toggler drives both overlay close + hamburger open states
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
 }
 </script>
 
@@ -102,4 +94,3 @@ export default {
   transform: translateX(-100%);
 }
 </style>
-

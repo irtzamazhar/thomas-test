@@ -1,4 +1,5 @@
 <template>
+  <!-- Compact property summary card used across tile view and map info windows -->
   <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 flex flex-col">
     <div class="relative w-full h-[200px] overflow-hidden">
       <img :src="property.image" :alt="property.address" class="w-full h-full object-cover" />
@@ -33,7 +34,6 @@
       </div>
     </div>
     
-    <!-- Card Footer -->
     <div class="grid grid-cols-4 border-t border-gray-200 bg-gray-50">
       <div class="text-center py-2.5 border-r border-gray-200">
         <div class="text-xs text-gray-600 font-medium mb-0.5">Beds</div>
@@ -58,6 +58,8 @@
 <script>
 import { useStore } from 'vuex'
 
+const MODULE = 'properties'
+
 export default {
   name: 'PropertyCard',
   props: {
@@ -69,13 +71,14 @@ export default {
   setup(props) {
     const store = useStore()
     
+    // Formatting helpers keep template lean and readable
     const formatPrice = (price) => {
       if (!price) return '-'
       return price.toLocaleString()
     }
     
     const handleToggleFavorite = () => {
-      store.dispatch('toggleFavorite', props.property.id)
+      store.dispatch(`${MODULE}/toggleFavorite`, props.property.id)
     }
     
     return {
@@ -85,4 +88,3 @@ export default {
   }
 }
 </script>
-
